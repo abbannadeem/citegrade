@@ -8,7 +8,15 @@ import { HireCTA } from "@/components/hire-cta";
 import { ShareLink } from "@/components/share-link";
 import { JsonLd } from "@/components/json-ld";
 import { siteUrl, SITE } from "@/lib/site";
-import { ArrowLeft } from "lucide-react";
+import { MarketingHeader } from "@/components/marketing-header";
+import { MarketingFooter } from "@/components/marketing-footer";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Sparkles, Play, Bookmark, ArrowUpRight } from "lucide-react";
+import { getCurrentUser } from "@/lib/auth";
+import { CATEGORY_MAX, type CheckCategory, CATEGORY_LABELS } from "@/lib/audit/types";
+import { hostOf, relativeTime } from "@/lib/utils";
 
 type Params = { params: Promise<{ slug: string }> };
 
@@ -16,15 +24,9 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { slug } = await params;
   const report = await loadReport(slug);
   if (!report) return { title: "Report not found" };
-  const host = (() => {
-    try {
-      return new URL(report.url).host;
-    } catch {
-      return report.url;
-    }
-  })();
+  const host = hostOf(report.url);
   const title = `${host} scored ${report.score}/100 (${report.grade}) on AI SEO`;
-  const desc = `${report.verdict}. Citegrade audited ${host} against 100 points of AI SEO: llms.txt, JSON-LD schema, semantic HTML, meta, crawlability, and E-E-A-T signals.`;
+  const desc = `${report.verdict}. Audited against 100 points of AI SEO: llms.txt, JSON-LD schema, semantic HTML, meta, crawlability, and E-E-A-T signals.`;
   return {
     title,
     description: desc,
@@ -47,7 +49,7 @@ function reportJsonLd(report: Awaited<ReturnType<typeof loadReport>>) {
     "@context": "https://schema.org",
     "@type": "Article",
     "@id": `${url}#article`,
-    headline: `AI SEO audit: ${new URL(report.url).host} scored ${report.score}/100`,
+    headline: `AI SEO audit: ${hostOf(report.url)} scored ${report.score}/100`,
     description: report.verdict,
     url,
     datePublished: report.fetchedAt,
@@ -55,17 +57,6 @@ function reportJsonLd(report: Awaited<ReturnType<typeof loadReport>>) {
     mainEntityOfPage: { "@type": "WebPage", "@id": url },
     author: { "@id": `${SITE.url}#person` },
     publisher: { "@id": `${SITE.url}#organization` },
-    about: {
-      "@type": "WebSite",
-      url: report.url,
-      name: (() => {
-        try {
-          return new URL(report.url).host;
-        } catch {
-          return report.url;
-        }
-      })(),
-    },
   } as const;
 }
 
@@ -73,79 +64,110 @@ export default async function ReportPage({ params }: Params) {
   const { slug } = await params;
   const report = await loadReport(slug);
   if (!report) notFound();
-
-  const host = (() => {
-    try {
-      return new URL(report.url).host;
-    } catch {
-      return report.url;
-    }
-  })();
+  const user = await getCurrentUser();
+  const host = hostOf(report.url);
 
   return (
     <>
       <JsonLd data={reportJsonLd(report)} />
+      <MarketingHeader isAuthed={!!user} />
 
-      <main className="flex-1 px-6 py-12 sm:py-16">
+      <main className="flex-1 px-6 py-10 sm:py-14">
         <div className="max-w-4xl mx-auto">
-          <nav className="mb-8" aria-label="Breadcrumb">
-            <Link
-              href="/"
-              className="inline-flex items-center gap-1.5 text-sm text-zinc-500 hover:text-zinc-300 transition-colors"
-            >
-              <ArrowLeft className="w-3.5 h-3.5" />
-              New audit
-            </Link>
-          </nav>
-
-          <header className="space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
-              <div>
-                <p className="text-xs uppercase tracking-widest text-zinc-500 mb-2">
-                  AI SEO report
-                </p>
-                <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">
-                  <a
-                    href={report.finalUrl || report.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="font-mono text-emerald-300 hover:underline underline-offset-4 break-all"
-                  >
-                    {host}
-                  </a>
-                </h1>
-                <p className="mt-2 text-sm text-zinc-500 font-mono">
-                  Scanned <time dateTime={report.fetchedAt}>{new Date(report.fetchedAt).toLocaleString()}</time>
-                  {" · "}
-                  {report.durationMs}ms · HTTP {report.metadata.statusCode}
-                </p>
-              </div>
-              <ShareLink url={siteUrl(`/r/${report.id}`)} />
+          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-10">
+            <div>
+              <Badge variant="primary" className="mb-3">
+                <Sparkles className="w-3 h-3" /> AI SEO report
+              </Badge>
+              <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">
+                <a
+                  href={report.finalUrl || report.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-mono text-indigo-300 hover:underline underline-offset-4 break-all"
+                >
+                  {host}
+                </a>
+              </h1>
+              <p className="mt-2 text-sm text-zinc-500 font-mono">
+                Scanned{" "}
+                <time dateTime={report.fetchedAt}>
+                  {relativeTime(report.fetchedAt)}
+                </time>{" "}
+                · {report.durationMs}ms · HTTP {report.metadata.statusCode}
+              </p>
             </div>
+            <div className="flex items-center gap-2">
+              <ShareLink url={siteUrl(`/r/${report.id}`)} />
+              <Button asChild variant="secondary" size="sm">
+                <Link href={`/?url=${encodeURIComponent(report.url)}`}>
+                  <Play className="w-3 h-3" /> Re-run
+                </Link>
+              </Button>
+            </div>
+          </div>
 
-            <div className="rounded-2xl border border-zinc-800/80 bg-zinc-900/40 p-6 sm:p-8">
+          {!user && (
+            <Card className="mb-8 p-5 border-indigo-500/30 bg-indigo-500/[0.04]">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                <div className="flex items-start gap-3">
+                  <Bookmark className="w-5 h-5 text-indigo-300 mt-0.5 shrink-0" />
+                  <div>
+                    <p className="text-sm text-zinc-100 font-medium">
+                      Save this report and track changes over time
+                    </p>
+                    <p className="text-xs text-zinc-400 mt-1">
+                      Free account · weekly re-scans on Pro · 1-click claim.
+                    </p>
+                  </div>
+                </div>
+                <Button asChild size="sm" className="shrink-0">
+                  <Link
+                    href={`/sign-up?claim=${report.id}&next=${encodeURIComponent(`/r/${report.id}`)}`}
+                  >
+                    Claim report <ArrowUpRight className="w-3.5 h-3.5" />
+                  </Link>
+                </Button>
+              </div>
+            </Card>
+          )}
+
+          <Card className="p-6 sm:p-10 mb-12 relative overflow-hidden">
+            <div className="absolute inset-0 bg-aurora opacity-30 pointer-events-none" />
+            <div className="relative">
               <ScoreGauge
                 score={report.score}
                 grade={report.grade}
                 verdict={report.verdict}
               />
-              <dl className="mt-6 pt-6 border-t border-zinc-800/80 grid grid-cols-2 sm:grid-cols-4 gap-4 text-sm">
-                {report.categories.map((c) => (
-                  <div key={c.category}>
-                    <dt className="text-zinc-500 text-xs uppercase tracking-wider">
-                      {labelFor(c.category)}
-                    </dt>
-                    <dd className="mt-1 text-zinc-200 font-mono tabular-nums">
-                      {c.earned}
-                      <span className="text-zinc-600">/{c.max}</span>
-                    </dd>
-                  </div>
-                ))}
+              <dl className="mt-8 pt-6 border-t border-white/[0.06] grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 text-sm">
+                {report.categories.map((c) => {
+                  const pct = c.earned / c.max;
+                  const tone =
+                    pct >= 0.9
+                      ? "text-emerald-300"
+                      : pct >= 0.6
+                        ? "text-amber-300"
+                        : "text-rose-400";
+                  return (
+                    <div key={c.category}>
+                      <dt className="text-zinc-500 text-[10px] uppercase tracking-widest">
+                        {CATEGORY_LABELS[c.category as CheckCategory]}
+                      </dt>
+                      <dd className={`mt-1 font-mono tabular text-lg ${tone}`}>
+                        {c.earned}
+                        <span className="text-zinc-600 text-sm">
+                          /{CATEGORY_MAX[c.category as CheckCategory]}
+                        </span>
+                      </dd>
+                    </div>
+                  );
+                })}
               </dl>
             </div>
-          </header>
+          </Card>
 
-          <section className="mt-12 space-y-6" aria-label="Detailed findings">
+          <section className="space-y-6">
             <h2 className="text-xs uppercase tracking-widest text-zinc-500">
               Detailed findings
             </h2>
@@ -160,25 +182,15 @@ export default async function ReportPage({ params }: Params) {
 
           <p className="mt-12 text-xs text-zinc-600 text-center">
             Scored using Citegrade&apos;s public{" "}
-            <Link href="/" className="underline underline-offset-2">
+            <Link href="/docs" className="underline underline-offset-2">
               100-point rubric
             </Link>
-            . Re-run on the homepage to track improvements.
+            .
           </p>
         </div>
       </main>
+
+      <MarketingFooter />
     </>
   );
-}
-
-function labelFor(c: string): string {
-  const map: Record<string, string> = {
-    "llms-txt": "llms.txt",
-    schema: "Schema",
-    semantic: "Semantic",
-    meta: "Meta",
-    crawlability: "Crawl",
-    eeat: "E-E-A-T",
-  };
-  return map[c] ?? c;
 }

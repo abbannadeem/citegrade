@@ -1,0 +1,55 @@
+v1.0: SaaS launch — dashboard, auth, pricing, leaderboard, premium UI
+
+Brand
+- Linear-style indigo/violet identity (primary #5e5ce6) with aurora-glow backgrounds
+- Geist Sans + Geist Mono via Tailwind v4 theme tokens
+- Custom focus ring, scrollbar, selection, shimmer animation
+
+UI primitives (Radix + shadcn-style patterns)
+- Button (5 variants), Card, Badge, Input, Skeleton
+- Tabs, Tooltip, DropdownMenu, Dialog
+- Sonner toaster, cmdk Cmd+K command palette
+- Motion-powered animated score gauge with gradient fill
+
+App shell
+- Collapsible sidebar (Overview/Sites/Compare/Leaderboard/Settings)
+- Topbar with workspace, Cmd+K search trigger, notifications, avatar dropdown
+- Auth-gated /dashboard layout with redirect-to-sign-in
+
+Auth (dev-stub, swap to Clerk in production)
+- Cookie-based session, email-only sign-in/sign-up flows
+- /sign-in, /sign-up branded auth pages
+- Sign-out via Server Action
+
+Dashboard
+- /dashboard overview with KPI cards, sites table, recent activity, empty state
+- /dashboard/sites grid view with sparklines
+- /dashboard/sites/[host] with score history, audit history table, issues tab
+- /dashboard/compare side-by-side category diff
+- /dashboard/settings with plan, billing portal stub, API access teaser
+
+Pricing
+- /pricing two-tier (Free 'Scan' / Pro 'Monitor' $29) with FAQ
+- /pricing/checkout stubbed Stripe upgrade flow that flags account as Pro
+
+Leaderboard
+- /leaderboard public ranking sorted by score, dedup by host
+- ItemList JSON-LD for AI citation
+
+Marketing
+- Rebuilt landing: aurora hero, animated URL input, recent audits preview, feature grid, rubric explainer, CTA, FAQ
+- /changelog timeline with v0.1 to v1.0 build-in-public entries
+- /docs complete 100-point methodology
+- /about solo-founder bio
+- /legal/privacy, /legal/terms placeholders
+
+Report page (/r/[slug])
+- Refactored with new brand, animated SVG gauge with gradient fill
+- 'Claim this report' viral CTA for anonymous users
+- Share, re-run, hire-CTA all integrated
+
+Storage
+- Added owner-id metadata to reports
+- Audits attach ownerId automatically when authed
+
+Self-audit: 95/100, Grade A, AI-optimized

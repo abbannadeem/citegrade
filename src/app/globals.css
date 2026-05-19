@@ -1,33 +1,133 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-background: #09090b;
-  --color-foreground: #fafafa;
+  /* Background ramp - near-black indigo undertone */
+  --color-bg: #07070b;
+  --color-bg-elevated: #0d0d14;
+  --color-surface: #11111a;
+  --color-surface-hover: #16161f;
+  --color-border: rgba(255, 255, 255, 0.06);
+  --color-border-strong: rgba(255, 255, 255, 0.12);
+
+  /* Text */
+  --color-fg: #fafafa;
+  --color-fg-muted: #a1a1aa;
+  --color-fg-subtle: #71717a;
+
+  /* Primary: indigo / violet */
+  --color-primary: #5e5ce6;
+  --color-primary-hover: #7270ff;
+  --color-primary-soft: rgba(94, 92, 230, 0.12);
+  --color-primary-strong: rgba(94, 92, 230, 0.4);
+
+  /* Accent: violet glow */
+  --color-accent: #a78bfa;
+
+  /* Semantic */
+  --color-success: #10b981;
+  --color-warn: #f59e0b;
+  --color-danger: #f43f5e;
+
+  /* Score color scale */
+  --color-score-a: #10b981;
+  --color-score-b: #84cc16;
+  --color-score-c: #f59e0b;
+  --color-score-d: #f97316;
+  --color-score-f: #f43f5e;
+
+  --color-background: var(--color-bg);
+  --color-foreground: var(--color-fg);
+
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
 }
 
 html {
-  background: #09090b;
-  color: #fafafa;
+  background: var(--color-bg);
+  color: var(--color-fg);
   color-scheme: dark;
 }
 
 body {
-  background: #09090b;
-  color: #fafafa;
+  background: var(--color-bg);
+  color: var(--color-fg);
   font-family: var(--font-geist-sans), system-ui, -apple-system, sans-serif;
   font-feature-settings: "cv11", "ss01", "ss03";
   text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Aurora background glow — used on landing hero */
+.bg-aurora {
+  background-image:
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(94, 92, 230, 0.22), transparent 60%),
+    radial-gradient(ellipse 60% 40% at 80% 20%, rgba(167, 139, 250, 0.16), transparent 60%),
+    radial-gradient(ellipse 60% 40% at 20% 30%, rgba(34, 211, 238, 0.08), transparent 60%);
+}
+
+.bg-grid {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+  background-size: 32px 32px;
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black 30%, transparent 80%);
 }
 
 ::selection {
-  background: rgba(16, 185, 129, 0.25);
-  color: #ecfdf5;
+  background: rgba(94, 92, 230, 0.35);
+  color: #fafafa;
 }
 
 code,
 pre,
-.font-mono {
+.font-mono,
+.tabular {
   font-variant-numeric: tabular-nums;
+}
+
+/* Focus ring — keyboard only, premium feel */
+:focus-visible {
+  outline: 2px solid rgba(94, 92, 230, 0.6);
+  outline-offset: 2px;
+  border-radius: 0.25rem;
+}
+
+/* Scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.12) transparent;
+}
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+*::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+  background-clip: content-box;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.animate-shimmer {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.04) 50%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.6s linear infinite;
 }

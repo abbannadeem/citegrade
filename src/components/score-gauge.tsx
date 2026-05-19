@@ -1,3 +1,8 @@
+"use client";
+
+import { motion, useMotionValue, useTransform, animate } from "motion/react";
+import { useEffect, useState } from "react";
+
 interface Props {
   score: number;
   grade: string;
@@ -5,55 +10,81 @@ interface Props {
 }
 
 function colorFor(score: number): string {
-  if (score >= 90) return "stroke-emerald-500";
-  if (score >= 75) return "stroke-lime-400";
-  if (score >= 60) return "stroke-amber-400";
-  if (score >= 40) return "stroke-orange-500";
-  return "stroke-rose-500";
-}
-
-function textColorFor(score: number): string {
-  if (score >= 90) return "text-emerald-400";
-  if (score >= 75) return "text-lime-300";
-  if (score >= 60) return "text-amber-300";
-  if (score >= 40) return "text-orange-400";
-  return "text-rose-400";
+  if (score >= 90) return "#10b981";
+  if (score >= 75) return "#84cc16";
+  if (score >= 60) return "#f59e0b";
+  if (score >= 40) return "#f97316";
+  return "#f43f5e";
 }
 
 export function ScoreGauge({ score, grade, verdict }: Props) {
   const radius = 80;
   const circ = 2 * Math.PI * radius;
-  const dash = (score / 100) * circ;
+
+  const count = useMotionValue(0);
+  const rounded = useTransform(count, (v) => Math.round(v));
+  const dash = useTransform(count, (v) => (v / 100) * circ);
+  const [display, setDisplay] = useState(0);
+
+  useEffect(() => {
+    const controls = animate(count, score, {
+      duration: 1.4,
+      ease: [0.16, 1, 0.3, 1],
+    });
+    const unsub = rounded.on("change", (v) => setDisplay(v));
+    return () => {
+      controls.stop();
+      unsub();
+    };
+  }, [score, count, rounded]);
+
+  const color = colorFor(score);
+
   return (
-    <div className="flex items-center gap-6">
-      <div className="relative w-48 h-48 shrink-0">
+    <div className="flex flex-col sm:flex-row items-center gap-8">
+      <div className="relative w-52 h-52 shrink-0">
         <svg viewBox="0 0 200 200" className="w-full h-full -rotate-90">
+          <defs>
+            <linearGradient id="scoreGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor={color} stopOpacity="1" />
+              <stop offset="100%" stopColor={color} stopOpacity="0.5" />
+            </linearGradient>
+            <filter id="glow">
+              <feGaussianBlur stdDeviation="3" result="b" />
+              <feMerge>
+                <feMergeNode in="b" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+          </defs>
           <circle
             cx="100"
             cy="100"
             r={radius}
             fill="none"
-            stroke="currentColor"
-            className="text-zinc-800"
-            strokeWidth="12"
+            stroke="rgba(255,255,255,0.06)"
+            strokeWidth="14"
           />
-          <circle
+          <motion.circle
             cx="100"
             cy="100"
             r={radius}
             fill="none"
-            strokeWidth="12"
+            stroke="url(#scoreGrad)"
+            strokeWidth="14"
             strokeLinecap="round"
-            strokeDasharray={`${dash} ${circ}`}
-            className={`${colorFor(score)} transition-all duration-700`}
+            strokeDasharray={circ}
+            style={{ strokeDashoffset: useTransform(dash, (d) => circ - d) }}
+            filter="url(#glow)"
           />
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <span
-            className={`text-6xl font-bold tabular-nums tracking-tight ${textColorFor(score)}`}
+          <motion.span
+            className="text-6xl font-bold tabular tracking-tight"
+            style={{ color }}
           >
-            {score}
-          </span>
+            {display}
+          </motion.span>
           <span className="text-xs uppercase tracking-widest text-zinc-500 mt-1">
             / 100
           </span>
@@ -62,14 +93,18 @@ export function ScoreGauge({ score, grade, verdict }: Props) {
       <div>
         <div className="flex items-baseline gap-3">
           <span
-            className={`text-4xl font-bold tabular-nums ${textColorFor(score)}`}
+            className="text-5xl font-bold tabular"
+            style={{ color }}
           >
             {grade}
           </span>
-          <span className="text-zinc-400 text-sm">grade</span>
+          <span className="text-zinc-400 text-sm uppercase tracking-widest">
+            grade
+          </span>
         </div>
-        <p className="text-zinc-200 text-lg font-medium mt-1">{verdict}</p>
+        <p className="text-zinc-100 text-xl font-medium mt-2">{verdict}</p>
       </div>
     </div>
   );
 }
+

@@ -5,6 +5,7 @@ import { z } from "zod";
 import { runAudit } from "@/lib/audit";
 import { FetchError } from "@/lib/audit/fetch-html";
 import { saveReport } from "@/lib/storage";
+import { getCurrentUser } from "@/lib/auth";
 
 const FormSchema = z.object({
   url: z.string().min(1, "Enter a URL").max(2048),
@@ -29,7 +30,8 @@ export async function startAudit(
   let reportId: string;
   try {
     const report = await runAudit(parsed.data.url);
-    await saveReport(report);
+    const user = await getCurrentUser();
+    await saveReport(report, user ? { ownerId: user.id } : {});
     reportId = report.id;
   } catch (err) {
     if (err instanceof FetchError) {
