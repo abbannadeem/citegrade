@@ -1,66 +1,98 @@
 # Citegrade
 
-> A free 100-point AI SEO audit for the LLM era.
+> A 100-point AI SEO audit for the LLM era. Score any site's AI search
+> visibility — llms.txt, JSON-LD, semantic HTML, meta, crawlability, E-E-A-T.
 
-Paste any public URL, and within ~15 seconds Citegrade scores it across six
-categories — llms.txt, JSON-LD schema, semantic HTML, meta tags, crawlability,
-and E-E-A-T signals — and tells you exactly what ChatGPT, Claude, and
-Perplexity can't read on your site.
-
-**Status:** v0 — core audit engine + minimal marketing page. v1 (auth,
-dashboard, multi-site tracking, billing, polished SaaS UI/UX) in active
-development.
+**Status:** v1.1 — full SaaS. Real auth, database, quotas, billing, email,
+public API, and scheduled monitoring. External services (Stripe, Resend,
+Turso) activate when their keys are present; without keys, the app runs fully
+with sensible local fallbacks.
 
 ## What it checks
 
-| Category | Points | What |
-| --- | --- | --- |
-| **llms.txt** | 15 | File presence, llmstxt.org spec conformance, llms-full.txt companion |
-| **Structured data** | 25 | JSON-LD parseability, Organization/Person + sameAs, page-type schemas, relational schemas |
-| **Semantic HTML** | 15 | Single H1, no skipped heading levels, `<main>` / `<article>` / `<section>`, image alt coverage |
-| **Meta & social** | 15 | Title length, description length, canonical, og:image, twitter:card |
-| **Crawlability** | 15 | robots.txt, sitemap.xml, explicit AI bot rules (GPTBot, ClaudeBot, PerplexityBot, Google-Extended, Applebot-Extended), `<html lang>` |
-| **E-E-A-T** | 15 | Person schema or byline, freshness (`<time>` + last-updated), About + Contact, outbound authority links, sameAs network |
+| Category | Points |
+| --- | --- |
+| llms.txt (presence, spec, llms-full.txt) | 15 |
+| JSON-LD structured data (identity, page-type, relational) | 25 |
+| Semantic HTML (H1, hierarchy, landmarks, alt) | 15 |
+| Meta & social (title, description, canonical, OG, twitter) | 15 |
+| Crawlability (robots, sitemap, AI bot rules, lang) | 15 |
+| E-E-A-T (author, freshness, contact, authority, sameAs) | 15 |
+
+## Features
+
+**Audit** — 100-point engine, shareable `/r/[slug]` reports, animated score
+gauge, dynamic OG cards, "claim this report" for anonymous users.
+
+**Accounts** — real email + password auth (scrypt + DB sessions), magic-link
+sign-in, per-user dashboard.
+
+**Dashboard** — overview KPIs, sites tracking, per-site history + issues,
+side-by-side comparison, settings.
+
+**Plans & quotas** — Free (3 audits/day, 1 site, 7-day history) and Pro
+($29/mo: unlimited audits, 10 sites, monitoring, comparison, PDF, API).
+Anonymous audits rate-limited per IP.
+
+**Billing** — Stripe Checkout + webhook + Customer Portal. Dev-stub upgrade
+when keys absent.
+
+**Email** — Resend for magic links, welcome, score-change alerts. Logs to
+console when no key.
+
+**Public API** — `POST /api/v1/audit` with `Authorization: Bearer cg_...`,
+key management in settings, Pro-gated.
+
+**Monitoring** — weekly auto re-scans via `/api/cron/rescan` (Vercel Cron),
+score-change email alerts.
+
+**Leaderboard** — public ranking of audited sites by score.
 
 ## Stack
 
-- **Framework:** Next.js 16 (App Router, React 19, Server Actions)
-- **Language:** TypeScript 5
-- **Styling:** Tailwind CSS v4, Geist + Geist Mono
-- **HTML parsing:** cheerio
-- **Validation:** zod
-- **Icons:** lucide-react
-- **Storage:** filesystem JSON (MVP) — production target is Cloudflare D1
+- Next.js 16 (App Router, React 19, Server Actions)
+- TypeScript 5, Tailwind v4, Radix + shadcn-style components, motion
+- libSQL / Drizzle ORM (local SQLite file → Turso in prod, same code)
+- Stripe, Resend, scrypt (node:crypto)
 
-## Running locally
+## Run locally
 
 ```bash
 npm install
+cp .env.example .env.local   # optional — works without any keys
 npm run dev
-# open http://localhost:3000
+# http://localhost:3000
 ```
 
-Run a self-audit from the CLI:
+Self-audit from the CLI:
 
 ```bash
-npx tsx scripts/self-audit.ts https://stripe.com
 CITEGRADE_ALLOW_PRIVATE=1 npx tsx scripts/self-audit.ts http://localhost:3000
-npx tsx scripts/self-audit.ts https://example.com --save
+npx tsx scripts/self-audit.ts https://stripe.com --save
 ```
 
 ## Configuration
 
-| Env var | Default | Notes |
-| --- | --- | --- |
-| `NEXT_PUBLIC_SITE_URL` | `http://localhost:3000` | Used for `metadataBase`, canonical, OG, sitemap, llms.txt |
-| `NEXT_PUBLIC_UPWORK_URL` | placeholder | The "Hire me" link target |
-| `NEXT_PUBLIC_AUTHOR_URL` | placeholder | Person schema URL |
-| `CITEGRADE_ALLOW_PRIVATE` | unset | When `1`, the SSRF guard allows loopback / RFC1918 hosts (dev only) |
+All optional — see `.env.example`. Without keys: SQLite file storage,
+dev-stub billing, console email. With keys: Turso DB, real Stripe billing,
+Resend email.
 
-## Self-audit
+| Var | Purpose |
+| --- | --- |
+| `DATABASE_URL` / `DATABASE_AUTH_TOKEN` | Turso libSQL (else local file) |
+| `STRIPE_SECRET_KEY` / `STRIPE_PRICE_PRO` / `STRIPE_WEBHOOK_SECRET` | Billing |
+| `RESEND_API_KEY` / `EMAIL_FROM` | Transactional email |
+| `CRON_SECRET` | Protects the re-scan cron |
+| `NEXT_PUBLIC_SITE_URL` | Canonical base URL |
 
-Citegrade scores **96 / 100** on its own audit.
+## Deploy (Vercel)
+
+1. Import the repo on Vercel (Next.js auto-detected).
+2. Add env vars (at minimum `NEXT_PUBLIC_SITE_URL`).
+3. For persistence in production, create a free Turso DB and set
+   `DATABASE_URL` + `DATABASE_AUTH_TOKEN`.
+4. `vercel.json` wires the weekly monitoring cron automatically.
 
 ## License
 
-MIT.
+MIT. Built by [Abban Nadeem](https://www.upwork.com/freelancers/abban).

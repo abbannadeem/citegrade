@@ -1,6 +1,10 @@
 import "server-only";
 import type { AuditReport } from "./audit/types";
-import { listReportsForUser, reportsByHost } from "./storage";
+import {
+  listReportsForUser,
+  reportsByHost,
+  reportsByHostForUser,
+} from "./storage";
 import { hostOf } from "./utils";
 
 export interface SiteSummary {
@@ -53,10 +57,8 @@ export async function auditsForHost(
   host: string,
   ownerId?: string,
 ): Promise<AuditReport[]> {
-  const reports = await reportsByHost(host, 200);
-  if (!ownerId) return reports;
-  // filter to user-owned where possible (anonymous reports show too)
-  return reports;
+  if (ownerId) return reportsByHostForUser(host, ownerId, 200);
+  return reportsByHost(host, 200);
 }
 
 export async function aggregateScore(

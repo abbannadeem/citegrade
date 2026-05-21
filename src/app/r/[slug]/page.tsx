@@ -13,8 +13,9 @@ import { MarketingFooter } from "@/components/marketing-footer";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Sparkles, Play, Bookmark, ArrowUpRight } from "lucide-react";
+import { Sparkles, Play, Bookmark, ArrowUpRight, FileDown } from "lucide-react";
 import { getCurrentUser } from "@/lib/auth";
+import { limitsFor } from "@/lib/plans";
 import { CATEGORY_MAX, type CheckCategory, CATEGORY_LABELS } from "@/lib/audit/types";
 import { hostOf, relativeTime } from "@/lib/utils";
 
@@ -99,6 +100,17 @@ export default async function ReportPage({ params }: Params) {
             </div>
             <div className="flex items-center gap-2">
               <ShareLink url={siteUrl(`/r/${report.id}`)} />
+              {user && limitsFor(user.plan).pdfExport && (
+                <Button asChild variant="secondary" size="sm">
+                  <a
+                    href={`/api/report/${report.id}/pdf`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <FileDown className="w-3 h-3" /> PDF
+                  </a>
+                </Button>
+              )}
               <Button asChild variant="secondary" size="sm">
                 <Link href={`/?url=${encodeURIComponent(report.url)}`}>
                   <Play className="w-3 h-3" /> Re-run

@@ -40,5 +40,10 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# local report store (file-based JSON store for MVP — production uses D1)
+# local data store (SQLite db + legacy JSON reports)
 /.data/
+
+# scratch
+.commit-msg.tmp
+.verify.js
+.v.js

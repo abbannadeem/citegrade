@@ -8,8 +8,11 @@ import { Button } from "@/components/ui/button";
 import { ScorePill } from "@/components/score-pill";
 import { Sparkline } from "@/components/sparkline";
 import { Badge } from "@/components/ui/badge";
-import { Play, ArrowUpRight, ArrowLeft } from "lucide-react";
+import { Play, ArrowUpRight, ArrowLeft, Bell, BellOff } from "lucide-react";
 import { hostOf, relativeTime } from "@/lib/utils";
+import { getSite } from "@/lib/sites";
+import { limitsFor } from "@/lib/plans";
+import { toggleMonitoringAction } from "@/app/dashboard/site-actions";
 
 interface Params {
   params: Promise<{ host: string }>;
@@ -30,6 +33,9 @@ export default async function SitePage({ params }: Params) {
   const latest = audits[0];
   const prev = audits[1];
   const sparkline = [...audits].reverse().map((a) => a.score);
+  const site = await getSite(user.id, host);
+  const canMonitor = limitsFor(user.plan).monitoring;
+  const monitoring = site?.monitorEnabled ?? false;
 
   const issues = latest.categories.flatMap((c) =>
     c.findings.filter((f) => f.severity !== "pass"),
@@ -57,6 +63,31 @@ export default async function SitePage({ params }: Params) {
           </p>
         </div>
         <div className="flex items-center gap-2">
+          {canMonitor && (
+            <form action={toggleMonitoringAction}>
+              <input type="hidden" name="host" value={host} />
+              <input type="hidden" name="enable" value={monitoring ? "0" : "1"} />
+              <Button
+                type="submit"
+                variant={monitoring ? "secondary" : "outline"}
+                title={
+                  monitoring
+                    ? "Weekly auto re-scan is on"
+                    : "Enable weekly auto re-scan"
+                }
+              >
+                {monitoring ? (
+                  <>
+                    <Bell className="w-3.5 h-3.5" /> Monitoring on
+                  </>
+                ) : (
+                  <>
+                    <BellOff className="w-3.5 h-3.5" /> Monitor
+                  </>
+                )}
+              </Button>
+            </form>
+          )}
           <Button variant="secondary" asChild>
             <Link href={`/r/${latest.id}`}>
               View latest <ArrowUpRight className="w-3.5 h-3.5" />
