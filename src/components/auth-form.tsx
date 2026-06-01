@@ -40,14 +40,14 @@ export function AuthForm({
       {claim && <input type="hidden" name="claim" value={claim} />}
       {mode === "sign-up" && (
         <div>
-          <label htmlFor="name" className="block text-xs text-zinc-400 mb-1.5">
+          <label htmlFor="name" className="block text-xs text-muted mb-1.5">
             Name
           </label>
           <Input id="name" name="name" placeholder="Jane Doe" autoComplete="name" />
         </div>
       )}
       <div>
-        <label htmlFor="email" className="block text-xs text-zinc-400 mb-1.5">
+        <label htmlFor="email" className="block text-xs text-muted mb-1.5">
           Email
         </label>
         <Input
@@ -63,7 +63,7 @@ export function AuthForm({
       <div>
         <label
           htmlFor="password"
-          className="block text-xs text-zinc-400 mb-1.5"
+          className="block text-xs text-muted mb-1.5"
         >
           Password
         </label>
@@ -77,18 +77,18 @@ export function AuthForm({
         />
       </div>
       {state?.error && (
-        <p className="text-sm text-rose-400" role="alert">
+        <p className="text-sm text-danger" role="alert">
           {state.error}
         </p>
       )}
       <Submit label={mode === "sign-up" ? "Create account" : "Sign in"} />
-      <p className="text-xs text-zinc-500 text-center pt-2">
+      <p className="text-xs text-muted text-center pt-2">
         {mode === "sign-up" ? (
           <>
             Already have an account?{" "}
             <Link
               href={`/sign-in${next ? `?next=${encodeURIComponent(next)}` : ""}`}
-              className="text-indigo-300 hover:text-indigo-200"
+              className="text-primary hover:underline"
             >
               Sign in
             </Link>
@@ -98,7 +98,7 @@ export function AuthForm({
             New here?{" "}
             <Link
               href={`/sign-up${next ? `?next=${encodeURIComponent(next)}` : ""}`}
-              className="text-indigo-300 hover:text-indigo-200"
+              className="text-primary hover:underline"
             >
               Create an account
             </Link>

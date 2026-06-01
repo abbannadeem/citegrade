@@ -101,9 +101,9 @@ export default async function PricingPage() {
             <h1 className="text-4xl sm:text-6xl font-bold tracking-tight">
               Score for free.
               <br />
-              <span className="text-indigo-300">Monitor for $29.</span>
+              <span className="text-primary">Monitor for $29.</span>
             </h1>
-            <p className="mt-5 text-lg text-zinc-400 max-w-xl mx-auto">
+            <p className="mt-5 text-lg text-muted max-w-xl mx-auto">
               No usage credits. No hidden seat fees. Cancel anytime, no
               retention loops.
             </p>
@@ -117,8 +117,8 @@ export default async function PricingPage() {
                 key={tier.name}
                 className={`relative rounded-2xl border p-7 ${
                   tier.highlight
-                    ? "border-indigo-500/40 bg-indigo-500/[0.04] shadow-[0_0_60px_rgba(94,92,230,0.08)]"
-                    : "border-white/[0.08] bg-white/[0.02]"
+                    ? "border-primary/40 bg-primary-soft shadow-[0_0_60px_rgba(94,92,230,0.08)]"
+                    : "border-line bg-surface"
                 }`}
               >
                 {tier.highlight && (
@@ -129,16 +129,16 @@ export default async function PricingPage() {
                     Most popular
                   </Badge>
                 )}
-                <h3 className="text-xs uppercase tracking-widest text-zinc-500">
+                <h3 className="text-xs uppercase tracking-widest text-subtle">
                   {tier.name}
                 </h3>
                 <div className="mt-3 flex items-baseline gap-2">
                   <span className="text-5xl font-bold tracking-tight tabular">
                     {tier.price}
                   </span>
-                  <span className="text-zinc-500">{tier.period}</span>
+                  <span className="text-subtle">{tier.period}</span>
                 </div>
-                <p className="mt-3 text-sm text-zinc-400">{tier.description}</p>
+                <p className="mt-3 text-sm text-muted">{tier.description}</p>
 
                 <Button
                   asChild
@@ -153,9 +153,9 @@ export default async function PricingPage() {
                   {tier.features.map((f) => (
                     <li
                       key={f}
-                      className="flex items-start gap-2.5 text-sm text-zinc-300"
+                      className="flex items-start gap-2.5 text-sm text-fg"
                     >
-                      <Check className="w-4 h-4 text-indigo-300 mt-0.5 shrink-0" />
+                      <Check className="w-4 h-4 text-primary mt-0.5 shrink-0" />
                       <span>{f}</span>
                     </li>
                   ))}
@@ -164,11 +164,11 @@ export default async function PricingPage() {
             ))}
           </div>
 
-          <p className="mt-12 text-center text-sm text-zinc-500 max-w-xl mx-auto">
+          <p className="mt-12 text-center text-sm text-subtle max-w-xl mx-auto">
             Need an agency tier (white-label, 75 sites, client workspaces)?{" "}
             <Link
               href="/about"
-              className="text-indigo-300 hover:text-indigo-200"
+              className="text-primary hover:text-primary"
             >
               Reach out
             </Link>{" "}
@@ -176,7 +176,7 @@ export default async function PricingPage() {
           </p>
         </section>
 
-        <section className="px-6 py-20 border-t border-white/[0.04]">
+        <section className="px-6 py-20 border-t border-line">
           <div className="max-w-3xl mx-auto">
             <h2 className="text-2xl font-semibold tracking-tight mb-8">
               Frequently asked
@@ -185,15 +185,15 @@ export default async function PricingPage() {
               {FAQ.map((f) => (
                 <details
                   key={f.q}
-                  className="group rounded-xl border border-white/[0.06] bg-white/[0.02]"
+                  className="group rounded-xl border border-line bg-surface"
                 >
                   <summary className="px-5 py-4 cursor-pointer list-none flex items-center justify-between gap-4">
-                    <span className="font-medium text-zinc-100">{f.q}</span>
-                    <span className="text-zinc-500 group-open:rotate-45 transition-transform">
+                    <span className="font-medium text-fg">{f.q}</span>
+                    <span className="text-subtle group-open:rotate-45 transition-transform">
                       +
                     </span>
                   </summary>
-                  <div className="px-5 pb-5 text-sm text-zinc-400">{f.a}</div>
+                  <div className="px-5 pb-5 text-sm text-muted">{f.a}</div>
                 </details>
               ))}
             </div>

@@ -85,12 +85,12 @@ export default async function ReportPage({ params }: Params) {
                   href={report.finalUrl || report.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="font-mono text-indigo-300 hover:underline underline-offset-4 break-all"
+                  className="font-mono text-primary hover:underline underline-offset-4 break-all"
                 >
                   {host}
                 </a>
               </h1>
-              <p className="mt-2 text-sm text-zinc-500 font-mono">
+              <p className="mt-2 text-sm text-subtle font-mono">
                 Scanned{" "}
                 <time dateTime={report.fetchedAt}>
                   {relativeTime(report.fetchedAt)}
@@ -120,15 +120,15 @@ export default async function ReportPage({ params }: Params) {
           </div>
 
           {!user && (
-            <Card className="mb-8 p-5 border-indigo-500/30 bg-indigo-500/[0.04]">
+            <Card className="mb-8 p-5 border-primary/30 bg-primary-soft">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                 <div className="flex items-start gap-3">
-                  <Bookmark className="w-5 h-5 text-indigo-300 mt-0.5 shrink-0" />
+                  <Bookmark className="w-5 h-5 text-primary mt-0.5 shrink-0" />
                   <div>
-                    <p className="text-sm text-zinc-100 font-medium">
+                    <p className="text-sm text-fg font-medium">
                       Save this report and track changes over time
                     </p>
-                    <p className="text-xs text-zinc-400 mt-1">
+                    <p className="text-xs text-muted mt-1">
                       Free account · weekly re-scans on Pro · 1-click claim.
                     </p>
                   </div>
@@ -152,23 +152,23 @@ export default async function ReportPage({ params }: Params) {
                 grade={report.grade}
                 verdict={report.verdict}
               />
-              <dl className="mt-8 pt-6 border-t border-white/[0.06] grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 text-sm">
+              <dl className="mt-8 pt-6 border-t border-line grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 text-sm">
                 {report.categories.map((c) => {
                   const pct = c.earned / c.max;
                   const tone =
                     pct >= 0.9
-                      ? "text-emerald-300"
+                      ? "text-success"
                       : pct >= 0.6
-                        ? "text-amber-300"
-                        : "text-rose-400";
+                        ? "text-warn"
+                        : "text-danger";
                   return (
                     <div key={c.category}>
-                      <dt className="text-zinc-500 text-[10px] uppercase tracking-widest">
+                      <dt className="text-subtle text-[10px] uppercase tracking-widest">
                         {CATEGORY_LABELS[c.category as CheckCategory]}
                       </dt>
                       <dd className={`mt-1 font-mono tabular text-lg ${tone}`}>
                         {c.earned}
-                        <span className="text-zinc-600 text-sm">
+                        <span className="text-subtle text-sm">
                           /{CATEGORY_MAX[c.category as CheckCategory]}
                         </span>
                       </dd>
@@ -180,7 +180,7 @@ export default async function ReportPage({ params }: Params) {
           </Card>
 
           <section className="space-y-6">
-            <h2 className="text-xs uppercase tracking-widest text-zinc-500">
+            <h2 className="text-xs uppercase tracking-widest text-subtle">
               Detailed findings
             </h2>
             {report.categories.map((c) => (
@@ -189,10 +189,15 @@ export default async function ReportPage({ params }: Params) {
           </section>
 
           <section className="mt-12">
-            <HireCTA categories={report.categories} />
+            <HireCTA
+              categories={report.categories}
+              reportId={report.id}
+              siteHost={host}
+              currentScore={report.score}
+            />
           </section>
 
-          <p className="mt-12 text-xs text-zinc-600 text-center">
+          <p className="mt-12 text-xs text-subtle text-center">
             Scored using Citegrade&apos;s public{" "}
             <Link href="/docs" className="underline underline-offset-2">
               100-point rubric

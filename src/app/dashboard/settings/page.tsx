@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { cookies } from "next/headers";
-import { getCurrentUser } from "@/lib/auth";
+import { requireUser } from "@/lib/auth";
 import { listApiKeys } from "@/lib/api-keys";
 import { limitsFor } from "@/lib/plans";
 import { billingEnabled } from "@/lib/billing";
@@ -31,7 +31,7 @@ export const metadata = { title: "Settings" };
 export const dynamic = "force-dynamic";
 
 export default async function SettingsPage() {
-  const user = (await getCurrentUser())!;
+  const user = await requireUser();
   const limits = limitsFor(user.plan);
   const keys = await listApiKeys(user.id);
   const c = await cookies();
@@ -39,7 +39,7 @@ export default async function SettingsPage() {
 
   return (
     <div className="px-6 lg:px-10 py-10 max-w-3xl">
-      <p className="text-xs uppercase tracking-widest text-zinc-500 mb-1">
+      <p className="text-xs uppercase tracking-widest text-subtle mb-1">
         Settings
       </p>
       <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight mb-8">
@@ -56,11 +56,11 @@ export default async function SettingsPage() {
           <CardContent>
             <form action={updateProfileAction} className="space-y-4">
               <div>
-                <label className="block text-xs text-zinc-400 mb-1.5">Name</label>
+                <label className="block text-xs text-muted mb-1.5">Name</label>
                 <Input name="name" defaultValue={user.name} />
               </div>
               <div>
-                <label className="block text-xs text-zinc-400 mb-1.5">Email</label>
+                <label className="block text-xs text-muted mb-1.5">Email</label>
                 <Input defaultValue={user.email} readOnly className="opacity-60" />
               </div>
               <Button type="submit" variant="secondary" size="sm">
@@ -79,10 +79,10 @@ export default async function SettingsPage() {
           <CardContent>
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-zinc-100 font-medium">{limits.name} plan</p>
-                <p className="text-xs text-zinc-500 mt-0.5">
+                <p className="text-fg font-medium">{limits.name} plan</p>
+                <p className="text-xs text-subtle mt-0.5">
                   {user.plan === "free"
-                    ? `${limits.auditsPerDay} audits/day · ${limits.sites} site · ${limits.historyDays}-day history`
+                    ? `${limits.auditsPerDay} audit${limits.auditsPerDay === 1 ? "" : "s"}/day · ${limits.sites} site${limits.sites === 1 ? "" : "s"} · ${limits.historyDays}-day history`
                     : `$${limits.priceMonthly}/mo · unlimited audits · ${limits.sites} sites`}
                 </p>
               </div>
@@ -122,17 +122,17 @@ export default async function SettingsPage() {
             <CardTitle>API access</CardTitle>
             <CardDescription>
               Programmatic audits via{" "}
-              <code className="font-mono text-zinc-300">POST /api/v1/audit</code>
+              <code className="font-mono text-fg">POST /api/v1/audit</code>
               . {limits.apiAccess ? "" : "Pro feature."}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             {newKey && (
-              <div className="rounded-lg border border-emerald-500/30 bg-emerald-500/5 p-4">
-                <p className="text-xs text-emerald-300 mb-2">
+              <div className="rounded-lg border border-success/30 bg-success-soft p-4">
+                <p className="text-xs text-success mb-2">
                   New key — copy it now, it won&apos;t be shown again:
                 </p>
-                <code className="block font-mono text-sm text-zinc-100 break-all bg-black/30 rounded px-3 py-2">
+                <code className="block font-mono text-sm text-fg break-all bg-surface2 rounded px-3 py-2">
                   {newKey}
                 </code>
               </div>
@@ -140,7 +140,7 @@ export default async function SettingsPage() {
 
             {!limits.apiAccess ? (
               <div className="flex items-center justify-between">
-                <p className="text-sm text-zinc-400">
+                <p className="text-sm text-muted">
                   Upgrade to Pro to generate API keys.
                 </p>
                 <Button asChild size="sm">
@@ -161,20 +161,20 @@ export default async function SettingsPage() {
                 </form>
 
                 {keys.length > 0 && (
-                  <ul className="divide-y divide-white/[0.06] rounded-lg border border-white/[0.06]">
+                  <ul className="divide-y divide-line rounded-lg border border-line">
                     {keys.map((k) => (
                       <li
                         key={k.id}
                         className="flex items-center justify-between px-4 py-3"
                       >
                         <div className="min-w-0">
-                          <p className="text-sm text-zinc-200">
+                          <p className="text-sm text-fg">
                             {k.name}{" "}
-                            <code className="font-mono text-xs text-zinc-500">
+                            <code className="font-mono text-xs text-subtle">
                               {k.prefix}…
                             </code>
                           </p>
-                          <p className="text-[11px] text-zinc-500 font-mono">
+                          <p className="text-[11px] text-subtle font-mono">
                             {k.revokedAt
                               ? "revoked"
                               : k.lastUsedAt
@@ -191,7 +191,7 @@ export default async function SettingsPage() {
                               size="icon"
                               aria-label="Revoke key"
                             >
-                              <Trash2 className="w-4 h-4 text-rose-400" />
+                              <Trash2 className="w-4 h-4 text-danger" />
                             </Button>
                           </form>
                         )}

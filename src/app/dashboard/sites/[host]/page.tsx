@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getCurrentUser } from "@/lib/auth";
+import { requireUser } from "@/lib/auth";
 import { auditsForHost } from "@/lib/dashboard";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
@@ -24,7 +24,7 @@ export async function generateMetadata({ params }: Params) {
 }
 
 export default async function SitePage({ params }: Params) {
-  const user = (await getCurrentUser())!;
+  const user = await requireUser();
   const { host: hostParam } = await params;
   const host = decodeURIComponent(hostParam);
   const audits = await auditsForHost(host, user.id);
@@ -45,20 +45,20 @@ export default async function SitePage({ params }: Params) {
     <div className="px-6 lg:px-10 py-10 max-w-7xl">
       <Link
         href="/dashboard/sites"
-        className="inline-flex items-center gap-1.5 text-xs text-zinc-500 hover:text-zinc-300 mb-6"
+        className="inline-flex items-center gap-1.5 text-xs text-subtle hover:text-fg mb-6"
       >
         <ArrowLeft className="w-3 h-3" /> All sites
       </Link>
 
       <div className="flex items-start justify-between gap-4 mb-8">
         <div>
-          <p className="text-xs uppercase tracking-widest text-zinc-500 mb-1">
+          <p className="text-xs uppercase tracking-widest text-subtle mb-1">
             Site
           </p>
           <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight font-mono">
             {host}
           </h1>
-          <p className="text-sm text-zinc-500 mt-1 font-mono">
+          <p className="text-sm text-subtle mt-1 font-mono">
             {audits.length} audits · latest {relativeTime(latest.fetchedAt)}
           </p>
         </div>
@@ -104,32 +104,32 @@ export default async function SitePage({ params }: Params) {
 
       <div className="grid lg:grid-cols-3 gap-4 mb-10">
         <Card className="p-6">
-          <p className="text-xs text-zinc-500 mb-2">Latest score</p>
+          <p className="text-xs text-subtle mb-2">Latest score</p>
           <div className="flex items-baseline gap-2">
             <span className="text-5xl font-bold tabular">{latest.score}</span>
-            <span className="text-zinc-500">/100</span>
+            <span className="text-subtle">/100</span>
             <ScorePill score={latest.score} grade={latest.grade} size="sm" />
           </div>
           {prev && (
-            <p className="text-xs text-zinc-500 mt-3 font-mono">
+            <p className="text-xs text-subtle mt-3 font-mono">
               {latest.score > prev.score ? "+" : ""}
               {latest.score - prev.score} since previous
             </p>
           )}
         </Card>
         <Card className="p-6">
-          <p className="text-xs text-zinc-500 mb-2">Score history</p>
+          <p className="text-xs text-subtle mb-2">Score history</p>
           <Sparkline values={sparkline} width={320} height={64} className="w-full" />
-          <p className="text-[10px] text-zinc-600 font-mono mt-3">
+          <p className="text-[10px] text-subtle font-mono mt-3">
             last {audits.length} audits
           </p>
         </Card>
         <Card className="p-6">
-          <p className="text-xs text-zinc-500 mb-2">Open issues</p>
-          <p className="text-5xl font-bold tabular text-zinc-100">
+          <p className="text-xs text-subtle mb-2">Open issues</p>
+          <p className="text-5xl font-bold tabular text-fg">
             {issues.length}
           </p>
-          <p className="text-xs text-zinc-500 font-mono mt-3">
+          <p className="text-xs text-subtle font-mono mt-3">
             from latest audit
           </p>
         </Card>
@@ -144,7 +144,7 @@ export default async function SitePage({ params }: Params) {
         <TabsContent value="audits">
           <Card className="overflow-hidden">
             <table className="w-full text-sm">
-              <thead className="bg-white/[0.02] border-b border-white/[0.06] text-[10px] uppercase tracking-widest text-zinc-500">
+              <thead className="bg-surface border-b border-line text-[10px] uppercase tracking-widest text-subtle">
                 <tr>
                   <th className="text-left font-medium px-5 py-3">When</th>
                   <th className="text-left font-medium px-5 py-3">Score</th>
@@ -153,16 +153,16 @@ export default async function SitePage({ params }: Params) {
                   <th className="text-right font-medium px-5 py-3"></th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/[0.04]">
+              <tbody className="divide-y divide-line">
                 {audits.map((a) => (
-                  <tr key={a.id} className="hover:bg-white/[0.02]">
-                    <td className="px-5 py-3 font-mono text-xs text-zinc-400">
+                  <tr key={a.id} className="hover:bg-surface2">
+                    <td className="px-5 py-3 font-mono text-xs text-muted">
                       {new Date(a.fetchedAt).toLocaleString()}
                     </td>
                     <td className="px-5 py-3">
                       <ScorePill score={a.score} grade={a.grade} size="sm" />
                     </td>
-                    <td className="px-5 py-3 text-zinc-500 font-mono text-xs">
+                    <td className="px-5 py-3 text-subtle font-mono text-xs">
                       {a.durationMs}ms
                     </td>
                     <td className="px-5 py-3">
@@ -175,7 +175,7 @@ export default async function SitePage({ params }: Params) {
                     <td className="px-5 py-3 text-right">
                       <Link
                         href={`/r/${a.id}`}
-                        className="text-zinc-500 hover:text-indigo-300"
+                        className="text-subtle hover:text-primary"
                       >
                         <ArrowUpRight className="w-4 h-4 inline" />
                       </Link>
@@ -189,7 +189,7 @@ export default async function SitePage({ params }: Params) {
 
         <TabsContent value="issues">
           {issues.length === 0 ? (
-            <Card className="p-8 text-center text-sm text-zinc-400">
+            <Card className="p-8 text-center text-sm text-muted">
               No open issues. Latest audit passed everything.
             </Card>
           ) : (
@@ -198,11 +198,11 @@ export default async function SitePage({ params }: Params) {
                 <li key={f.id}>
                   <Card className="p-4 flex items-start justify-between gap-3">
                     <div className="min-w-0">
-                      <p className="text-sm text-zinc-100 font-medium">
+                      <p className="text-sm text-fg font-medium">
                         {f.title}
                       </p>
                       {f.evidence && (
-                        <p className="text-xs text-zinc-500 mt-1 font-mono break-all">
+                        <p className="text-xs text-subtle mt-1 font-mono break-all">
                           {f.evidence}
                         </p>
                       )}

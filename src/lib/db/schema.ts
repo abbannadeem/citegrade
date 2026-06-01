@@ -15,6 +15,7 @@ export const users = sqliteTable(
     name: text("name"),
     image: text("image"),
     passwordHash: text("password_hash"),
+    role: text("role", { enum: ["user", "admin"] }).notNull().default("user"),
     plan: text("plan", { enum: ["free", "pro", "agency"] })
       .notNull()
       .default("free"),
@@ -164,6 +165,82 @@ export const usageEvents = sqliteTable(
     createdIdx: index("usage_events_created_idx").on(t.createdAt),
   }),
 );
+
+export const teams = sqliteTable(
+  "teams",
+  {
+    id: text("id").primaryKey(),
+    ownerId: text("owner_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    name: text("name").notNull(),
+    createdAt: text("created_at")
+      .notNull()
+      .default(sql`(CURRENT_TIMESTAMP)`),
+  },
+  (t) => ({
+    ownerIdx: index("teams_owner_idx").on(t.ownerId),
+  }),
+);
+
+export const teamMembers = sqliteTable(
+  "team_members",
+  {
+    id: text("id").primaryKey(),
+    teamId: text("team_id")
+      .notNull()
+      .references(() => teams.id, { onDelete: "cascade" }),
+    userId: text("user_id").references(() => users.id, {
+      onDelete: "cascade",
+    }),
+    email: text("email").notNull(),
+    role: text("role", { enum: ["owner", "member"] })
+      .notNull()
+      .default("member"),
+    status: text("status", { enum: ["active", "invited"] })
+      .notNull()
+      .default("invited"),
+    createdAt: text("created_at")
+      .notNull()
+      .default(sql`(CURRENT_TIMESTAMP)`),
+  },
+  (t) => ({
+    teamIdx: index("team_members_team_idx").on(t.teamId),
+    emailIdx: index("team_members_email_idx").on(t.email),
+  }),
+);
+
+export type DbTeam = typeof teams.$inferSelect;
+export type DbTeamMember = typeof teamMembers.$inferSelect;
+
+export const leads = sqliteTable(
+  "leads",
+  {
+    id: text("id").primaryKey(),
+    email: text("email").notNull(),
+    name: text("name"),
+    message: text("message"),
+    reportId: text("report_id"),
+    siteHost: text("site_host"),
+    currentScore: integer("current_score"),
+    potentialScore: integer("potential_score"),
+    intent: text("intent", { enum: ["quote", "consult"] })
+      .notNull()
+      .default("quote"),
+    status: text("status", { enum: ["new", "contacted", "closed"] })
+      .notNull()
+      .default("new"),
+    createdAt: text("created_at")
+      .notNull()
+      .default(sql`(CURRENT_TIMESTAMP)`),
+  },
+  (t) => ({
+    createdIdx: index("leads_created_idx").on(t.createdAt),
+    statusIdx: index("leads_status_idx").on(t.status),
+  }),
+);
+
+export type DbLead = typeof leads.$inferSelect;
 
 export type DbUser = typeof users.$inferSelect;
 export type NewDbUser = typeof users.$inferInsert;

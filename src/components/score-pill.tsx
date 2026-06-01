@@ -11,14 +11,14 @@ export function ScorePill({
 }) {
   const color =
     score >= 90
-      ? "bg-emerald-500/15 text-emerald-300 border-emerald-500/30"
+      ? "bg-emerald-500/10 text-emerald-700 dark:text-success border-emerald-500/30"
       : score >= 75
-        ? "bg-lime-500/15 text-lime-300 border-lime-500/30"
+        ? "bg-lime-500/10 text-lime-700 dark:text-lime-300 border-lime-500/30"
         : score >= 60
-          ? "bg-amber-500/15 text-amber-300 border-amber-500/30"
+          ? "bg-amber-500/10 text-amber-700 dark:text-amber-300 border-amber-500/30"
           : score >= 40
-            ? "bg-orange-500/15 text-orange-300 border-orange-500/30"
-            : "bg-rose-500/15 text-rose-300 border-rose-500/30";
+            ? "bg-orange-500/10 text-orange-700 dark:text-orange-300 border-orange-500/30"
+            : "bg-rose-500/10 text-rose-700 dark:text-rose-300 border-rose-500/30";
   const sz =
     size === "sm"
       ? "px-2 py-0.5 text-xs"
@@ -34,9 +34,7 @@ export function ScorePill({
       )}
     >
       {score}
-      {grade && (
-        <span className="opacity-60">·{grade}</span>
-      )}
+      {grade && <span className="opacity-60">·{grade}</span>}
     </span>
   );
 }

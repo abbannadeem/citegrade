@@ -11,17 +11,17 @@ export default async function PrivacyPage() {
       <MarketingHeader isAuthed={!!user} />
       <main className="flex-1 px-6 py-16">
         <div className="max-w-2xl mx-auto">
-          <p className="text-xs uppercase tracking-widest text-zinc-500 mb-3">
+          <p className="text-xs uppercase tracking-widest text-subtle mb-3">
             Legal
           </p>
           <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">
             Privacy policy
           </h1>
-          <p className="mt-2 text-sm text-zinc-500 font-mono">
+          <p className="mt-2 text-sm text-subtle font-mono">
             Last updated 2026-05-19
           </p>
-          <div className="mt-8 space-y-5 text-zinc-300 leading-relaxed text-sm">
-            <h2 className="text-lg font-semibold text-zinc-100 mt-8">
+          <div className="mt-8 space-y-5 text-fg leading-relaxed text-sm">
+            <h2 className="text-lg font-semibold text-fg mt-8">
               What we collect
             </h2>
             <p>
@@ -30,7 +30,7 @@ export default async function PrivacyPage() {
               When you create an account we store your email, display name,
               and the audits you save.
             </p>
-            <h2 className="text-lg font-semibold text-zinc-100 mt-8">
+            <h2 className="text-lg font-semibold text-fg mt-8">
               What we do not collect
             </h2>
             <p>
@@ -38,7 +38,7 @@ export default async function PrivacyPage() {
               marketing site. We use first-party Plausible for aggregate page
               counts only.
             </p>
-            <h2 className="text-lg font-semibold text-zinc-100 mt-8">
+            <h2 className="text-lg font-semibold text-fg mt-8">
               AI and training
             </h2>
             <p>
@@ -48,7 +48,7 @@ export default async function PrivacyPage() {
               endpoint for any host that wants its public reports
               de-indexed.
             </p>
-            <h2 className="text-lg font-semibold text-zinc-100 mt-8">
+            <h2 className="text-lg font-semibold text-fg mt-8">
               Retention
             </h2>
             <p>
@@ -56,13 +56,13 @@ export default async function PrivacyPage() {
               duration of your subscription. You can delete any report from
               your dashboard at any time.
             </p>
-            <h2 className="text-lg font-semibold text-zinc-100 mt-8">
+            <h2 className="text-lg font-semibold text-fg mt-8">
               Contact
             </h2>
             <p>
               Privacy questions: reach out via the Upwork link in /about.
             </p>
-            <p className="text-xs text-zinc-500 mt-12 pt-6 border-t border-white/[0.06]">
+            <p className="text-xs text-subtle mt-12 pt-6 border-t border-line">
               This is a v1 placeholder while we transition to Termly-generated
               policy with full GDPR/CPRA coverage. Production legal lands with
               the launch of paid plans.

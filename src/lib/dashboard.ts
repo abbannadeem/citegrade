@@ -61,6 +61,24 @@ export async function auditsForHost(
   return reportsByHost(host, 200);
 }
 
+export async function searchUserAudits(
+  ownerId: string,
+  query: string,
+): Promise<{ sites: SiteSummary[]; audits: AuditReport[] }> {
+  const q = query.trim().toLowerCase();
+  if (!q) return { sites: [], audits: [] };
+  const all = await listReportsForUser(ownerId, 500);
+  const audits = all.filter(
+    (r) =>
+      hostOf(r.url).toLowerCase().includes(q) ||
+      r.url.toLowerCase().includes(q) ||
+      (r.metadata.title ?? "").toLowerCase().includes(q),
+  );
+  const summaries = await siteSummariesForUser(ownerId);
+  const sites = summaries.filter((s) => s.host.toLowerCase().includes(q));
+  return { sites, audits: audits.slice(0, 50) };
+}
+
 export async function aggregateScore(
   reports: AuditReport[],
 ): Promise<{ avg: number; total: number; topCategory: string }> {

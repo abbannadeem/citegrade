@@ -15,11 +15,12 @@ export function ShareLink({ url }: { url: string }) {
           setTimeout(() => setCopied(false), 1500);
         } catch {}
       }}
-      className="inline-flex items-center gap-2 rounded-md border border-zinc-800 hover:border-zinc-600 px-3 py-1.5 text-xs text-zinc-300 font-mono transition-colors"
+      className="inline-flex items-center gap-2 rounded-md border border-line hover:border-line-strong px-3 py-1.5 text-xs text-muted hover:text-fg font-mono transition-colors"
     >
       {copied ? (
         <>
-          <Check className="w-3.5 h-3.5 text-emerald-400" /> Copied
+          <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />{" "}
+          Copied
         </>
       ) : (
         <>

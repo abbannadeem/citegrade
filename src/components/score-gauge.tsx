@@ -11,10 +11,10 @@ interface Props {
 
 function colorFor(score: number): string {
   if (score >= 90) return "#10b981";
-  if (score >= 75) return "#84cc16";
-  if (score >= 60) return "#f59e0b";
-  if (score >= 40) return "#f97316";
-  return "#f43f5e";
+  if (score >= 75) return "#65a30d";
+  if (score >= 60) return "#d97706";
+  if (score >= 40) return "#ea580c";
+  return "#e11d48";
 }
 
 export function ScoreGauge({ score, grade, verdict }: Props) {
@@ -47,22 +47,15 @@ export function ScoreGauge({ score, grade, verdict }: Props) {
           <defs>
             <linearGradient id="scoreGrad" x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stopColor={color} stopOpacity="1" />
-              <stop offset="100%" stopColor={color} stopOpacity="0.5" />
+              <stop offset="100%" stopColor={color} stopOpacity="0.55" />
             </linearGradient>
-            <filter id="glow">
-              <feGaussianBlur stdDeviation="3" result="b" />
-              <feMerge>
-                <feMergeNode in="b" />
-                <feMergeNode in="SourceGraphic" />
-              </feMerge>
-            </filter>
           </defs>
           <circle
             cx="100"
             cy="100"
             r={radius}
             fill="none"
-            stroke="rgba(255,255,255,0.06)"
+            stroke="var(--line-strong)"
             strokeWidth="14"
           />
           <motion.circle
@@ -75,7 +68,6 @@ export function ScoreGauge({ score, grade, verdict }: Props) {
             strokeLinecap="round"
             strokeDasharray={circ}
             style={{ strokeDashoffset: useTransform(dash, (d) => circ - d) }}
-            filter="url(#glow)"
           />
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center">
@@ -85,26 +77,22 @@ export function ScoreGauge({ score, grade, verdict }: Props) {
           >
             {display}
           </motion.span>
-          <span className="text-xs uppercase tracking-widest text-zinc-500 mt-1">
+          <span className="text-xs uppercase tracking-widest text-subtle mt-1">
             / 100
           </span>
         </div>
       </div>
       <div>
         <div className="flex items-baseline gap-3">
-          <span
-            className="text-5xl font-bold tabular"
-            style={{ color }}
-          >
+          <span className="text-5xl font-bold tabular" style={{ color }}>
             {grade}
           </span>
-          <span className="text-zinc-400 text-sm uppercase tracking-widest">
+          <span className="text-muted text-sm uppercase tracking-widest">
             grade
           </span>
         </div>
-        <p className="text-zinc-100 text-xl font-medium mt-2">{verdict}</p>
+        <p className="text-fg text-xl font-medium mt-2">{verdict}</p>
       </div>
     </div>
   );
 }
-

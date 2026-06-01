@@ -109,11 +109,56 @@ const MIGRATIONS = [
   `CREATE INDEX IF NOT EXISTS usage_events_user_idx ON usage_events(user_id)`,
   `CREATE INDEX IF NOT EXISTS usage_events_ip_idx ON usage_events(ip)`,
   `CREATE INDEX IF NOT EXISTS usage_events_created_idx ON usage_events(created_at)`,
+  `CREATE TABLE IF NOT EXISTS teams (
+    id TEXT PRIMARY KEY,
+    owner_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    name TEXT NOT NULL,
+    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+  )`,
+  `CREATE INDEX IF NOT EXISTS teams_owner_idx ON teams(owner_id)`,
+  `CREATE TABLE IF NOT EXISTS team_members (
+    id TEXT PRIMARY KEY,
+    team_id TEXT NOT NULL REFERENCES teams(id) ON DELETE CASCADE,
+    user_id TEXT REFERENCES users(id) ON DELETE CASCADE,
+    email TEXT NOT NULL,
+    role TEXT NOT NULL DEFAULT 'member',
+    status TEXT NOT NULL DEFAULT 'invited',
+    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+  )`,
+  `CREATE INDEX IF NOT EXISTS team_members_team_idx ON team_members(team_id)`,
+  `CREATE INDEX IF NOT EXISTS team_members_email_idx ON team_members(email)`,
+  `CREATE TABLE IF NOT EXISTS leads (
+    id TEXT PRIMARY KEY,
+    email TEXT NOT NULL,
+    name TEXT,
+    message TEXT,
+    report_id TEXT,
+    site_host TEXT,
+    current_score INTEGER,
+    potential_score INTEGER,
+    intent TEXT NOT NULL DEFAULT 'quote',
+    status TEXT NOT NULL DEFAULT 'new',
+    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+  )`,
+  `CREATE INDEX IF NOT EXISTS leads_created_idx ON leads(created_at)`,
+  `CREATE INDEX IF NOT EXISTS leads_status_idx ON leads(status)`,
+];
+
+// ALTER statements that may fail if the column already exists — run tolerantly.
+const ALTERS = [
+  `ALTER TABLE users ADD COLUMN role TEXT NOT NULL DEFAULT 'user'`,
 ];
 
 async function migrate(client: Client) {
   for (const stmt of MIGRATIONS) {
     await client.execute(stmt);
+  }
+  for (const stmt of ALTERS) {
+    try {
+      await client.execute(stmt);
+    } catch {
+      // column already exists — ignore
+    }
   }
 }
 

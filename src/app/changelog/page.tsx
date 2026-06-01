@@ -60,7 +60,7 @@ export default async function ChangelogPage() {
           <h1 className="text-4xl sm:text-5xl font-bold tracking-tight">
             Changelog
           </h1>
-          <p className="mt-3 text-zinc-400">
+          <p className="mt-3 text-muted">
             What ships, when. Honest cadence. RSS feed coming with v1.1.
           </p>
 
@@ -70,25 +70,25 @@ export default async function ChangelogPage() {
               return (
                 <article
                   key={`${e.version}-${i}`}
-                  className="relative pl-8 border-l border-white/[0.08] pb-2"
+                  className="relative pl-8 border-l border-line pb-2"
                 >
-                  <div className="absolute left-0 top-0 -translate-x-1/2 w-3 h-3 rounded-full bg-indigo-500/30 border border-indigo-500/50" />
+                  <div className="absolute left-0 top-0 -translate-x-1/2 w-3 h-3 rounded-full bg-primary/30 border border-indigo-500/50" />
                   <div className="flex items-center gap-3 mb-2">
                     <time
                       dateTime={e.date}
-                      className="text-xs font-mono text-zinc-500"
+                      className="text-xs font-mono text-subtle"
                     >
                       {e.date}
                     </time>
                     <Badge variant={t.variant}>{t.label}</Badge>
-                    <span className="text-xs font-mono text-zinc-600">
+                    <span className="text-xs font-mono text-subtle">
                       {e.version}
                     </span>
                   </div>
-                  <h2 className="text-xl font-semibold text-zinc-100">
+                  <h2 className="text-xl font-semibold text-fg">
                     {e.title}
                   </h2>
-                  <p className="mt-2 text-sm text-zinc-400 leading-relaxed">
+                  <p className="mt-2 text-sm text-muted leading-relaxed">
                     {e.body}
                   </p>
                 </article>

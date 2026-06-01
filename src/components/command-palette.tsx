@@ -10,7 +10,6 @@ import {
   Trophy,
   CreditCard,
   FileText,
-  Sparkles,
   Settings,
   Scale,
   Newspaper,
@@ -52,65 +51,63 @@ export function CommandPalette() {
     router.push(href);
   };
 
+  if (!open) return null;
+
   return (
-    <>
-      {open && (
-        <div
-          className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-start justify-center pt-24 px-4"
-          onClick={() => setOpen(false)}
-        >
-          <div
-            className="w-full max-w-xl rounded-xl border border-white/[0.08] bg-[#0d0d14] shadow-2xl overflow-hidden"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <Command label="Command palette" loop>
-              <div className="flex items-center gap-2 px-4 border-b border-white/[0.06]">
-                <Search className="w-4 h-4 text-zinc-500" />
-                <Command.Input
-                  autoFocus
-                  placeholder="Type a command or search…"
-                  className="flex-1 h-12 bg-transparent text-sm text-zinc-100 placeholder:text-zinc-500 outline-none"
-                />
-                <kbd className="text-[10px] text-zinc-500 font-mono px-1.5 py-0.5 rounded border border-white/[0.08]">
-                  Esc
-                </kbd>
-              </div>
-              <Command.List className="max-h-96 overflow-y-auto p-2">
-                <Command.Empty className="px-3 py-8 text-center text-sm text-zinc-500">
-                  No results found.
-                </Command.Empty>
-                {["Navigate", "Actions"].map((group) => (
-                  <Command.Group
-                    key={group}
-                    heading={group}
-                    className="[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:pt-3 [&_[cmdk-group-heading]]:pb-1.5 [&_[cmdk-group-heading]]:text-[10px] [&_[cmdk-group-heading]]:uppercase [&_[cmdk-group-heading]]:tracking-widest [&_[cmdk-group-heading]]:text-zinc-500"
-                  >
-                    {ITEMS.filter((i) => i.group === group).map((item) => {
-                      const Icon = item.icon;
-                      return (
-                        <Command.Item
-                          key={item.id}
-                          value={`${item.label} ${item.href}`}
-                          onSelect={() => go(item.href)}
-                          className="flex items-center gap-3 px-3 py-2 rounded-md text-sm text-zinc-300 cursor-pointer data-[selected=true]:bg-white/[0.06] data-[selected=true]:text-white"
-                        >
-                          <Icon className="w-4 h-4 text-zinc-500" />
-                          {item.label}
-                        </Command.Item>
-                      );
-                    })}
-                  </Command.Group>
-                ))}
-              </Command.List>
-              <div className="px-4 py-2 border-t border-white/[0.06] flex items-center justify-between text-[10px] text-zinc-500 font-mono">
-                <span>↑↓ navigate</span>
-                <span>↵ select</span>
-                <span>esc close</span>
-              </div>
-            </Command>
+    <div
+      className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm flex items-start justify-center pt-24 px-4"
+      onClick={() => setOpen(false)}
+    >
+      <div
+        className="w-full max-w-xl rounded-xl border border-line bg-surface shadow-pop overflow-hidden"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <Command label="Command palette" loop>
+          <div className="flex items-center gap-2 px-4 border-b border-line">
+            <Search className="w-4 h-4 text-subtle" />
+            <Command.Input
+              autoFocus
+              placeholder="Type a command or search…"
+              className="flex-1 h-12 bg-transparent text-sm text-fg placeholder:text-subtle outline-none"
+            />
+            <kbd className="text-[10px] text-subtle font-mono px-1.5 py-0.5 rounded border border-line">
+              Esc
+            </kbd>
           </div>
-        </div>
-      )}
-    </>
+          <Command.List className="max-h-96 overflow-y-auto p-2">
+            <Command.Empty className="px-3 py-8 text-center text-sm text-subtle">
+              No results found.
+            </Command.Empty>
+            {["Navigate", "Actions"].map((group) => (
+              <Command.Group
+                key={group}
+                heading={group}
+                className="[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:pt-3 [&_[cmdk-group-heading]]:pb-1.5 [&_[cmdk-group-heading]]:text-[10px] [&_[cmdk-group-heading]]:uppercase [&_[cmdk-group-heading]]:tracking-widest [&_[cmdk-group-heading]]:text-subtle"
+              >
+                {ITEMS.filter((i) => i.group === group).map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <Command.Item
+                      key={item.id}
+                      value={`${item.label} ${item.href}`}
+                      onSelect={() => go(item.href)}
+                      className="flex items-center gap-3 px-3 py-2 rounded-md text-sm text-muted cursor-pointer data-[selected=true]:bg-surface2 data-[selected=true]:text-fg"
+                    >
+                      <Icon className="w-4 h-4 text-subtle" />
+                      {item.label}
+                    </Command.Item>
+                  );
+                })}
+              </Command.Group>
+            ))}
+          </Command.List>
+          <div className="px-4 py-2 border-t border-line flex items-center justify-between text-[10px] text-subtle font-mono">
+            <span>↑↓ navigate</span>
+            <span>↵ select</span>
+            <span>esc close</span>
+          </div>
+        </Command>
+      </div>
+    </div>
   );
 }

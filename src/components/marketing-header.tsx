@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Sparkles, Menu, X } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 interface Props {
   isAuthed: boolean;
@@ -19,13 +20,13 @@ const NAV = [
 export function MarketingHeader({ isAuthed }: Props) {
   const [open, setOpen] = useState(false);
   return (
-    <header className="sticky top-0 z-40 border-b border-white/[0.06] bg-[#07070b]/70 backdrop-blur-xl">
+    <header className="sticky top-0 z-40 border-b border-line bg-bg/80 backdrop-blur-xl">
       <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2 group">
-          <div className="w-7 h-7 rounded-md bg-indigo-500/20 border border-indigo-500/40 flex items-center justify-center group-hover:bg-indigo-500/30 transition-colors">
-            <Sparkles className="w-3.5 h-3.5 text-indigo-300" />
+          <div className="w-7 h-7 rounded-md bg-primary flex items-center justify-center shadow-sm">
+            <Sparkles className="w-3.5 h-3.5 text-primary-fg" />
           </div>
-          <span className="text-base font-semibold tracking-tight">
+          <span className="text-base font-semibold tracking-tight text-fg">
             Citegrade
           </span>
         </Link>
@@ -34,13 +35,14 @@ export function MarketingHeader({ isAuthed }: Props) {
             <Link
               key={n.href}
               href={n.href}
-              className="text-zinc-400 hover:text-zinc-100 transition-colors"
+              className="text-muted hover:text-fg transition-colors"
             >
               {n.label}
             </Link>
           ))}
         </nav>
         <div className="hidden md:flex items-center gap-2">
+          <ThemeToggle />
           {isAuthed ? (
             <Button asChild size="sm">
               <Link href="/dashboard">Dashboard</Link>
@@ -56,27 +58,30 @@ export function MarketingHeader({ isAuthed }: Props) {
             </>
           )}
         </div>
-        <button
-          onClick={() => setOpen((o) => !o)}
-          className="md:hidden p-2 text-zinc-400 hover:text-zinc-100"
-          aria-label="Toggle menu"
-        >
-          {open ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-        </button>
+        <div className="md:hidden flex items-center gap-1">
+          <ThemeToggle />
+          <button
+            onClick={() => setOpen((o) => !o)}
+            className="p-2 text-muted hover:text-fg"
+            aria-label="Toggle menu"
+          >
+            {open ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
+        </div>
       </div>
       {open && (
-        <div className="md:hidden border-t border-white/[0.06] px-6 py-4 space-y-3">
+        <div className="md:hidden border-t border-line px-6 py-4 space-y-3 bg-bg">
           {NAV.map((n) => (
             <Link
               key={n.href}
               href={n.href}
-              className="block text-zinc-300 hover:text-white"
+              className="block text-muted hover:text-fg"
               onClick={() => setOpen(false)}
             >
               {n.label}
             </Link>
           ))}
-          <div className="pt-3 border-t border-white/[0.06] flex gap-2">
+          <div className="pt-3 border-t border-line flex gap-2">
             {isAuthed ? (
               <Button asChild className="flex-1">
                 <Link href="/dashboard">Dashboard</Link>

@@ -1,4 +1,5 @@
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 import { eq } from "drizzle-orm";
 import { nanoid } from "nanoid";
 import { getDb, ensureSchema } from "./db/client";
@@ -13,17 +14,27 @@ export interface SessionUser {
   email: string;
   name: string;
   plan: "free" | "pro" | "agency";
+  role: "user" | "admin";
   image: string | null;
   stripeCustomerId: string | null;
   createdAt: string;
 }
 
+function adminEmails(): string[] {
+  return (process.env.ADMIN_EMAILS || "")
+    .split(",")
+    .map((e) => e.trim().toLowerCase())
+    .filter(Boolean);
+}
+
 function toSessionUser(u: DbUser): SessionUser {
+  const isEnvAdmin = adminEmails().includes(u.email.toLowerCase());
   return {
     id: u.id,
     email: u.email,
     name: u.name || u.email.split("@")[0],
     plan: u.plan,
+    role: isEnvAdmin ? "admin" : u.role,
     image: u.image,
     stripeCustomerId: u.stripeCustomerId,
     createdAt: u.createdAt,
@@ -80,6 +91,21 @@ export async function getCurrentUser(): Promise<SessionUser | null> {
     .limit(1);
   if (!userRows[0]) return null;
   return toSessionUser(userRows[0]);
+}
+
+/** Returns the current user or redirects to sign-in. Use in protected pages. */
+export async function requireUser(next = "/dashboard"): Promise<SessionUser> {
+  const user = await getCurrentUser();
+  if (!user) redirect(`/sign-in?next=${encodeURIComponent(next)}`);
+  return user;
+}
+
+/** Returns the current user if admin, else redirects. */
+export async function requireAdmin(): Promise<SessionUser> {
+  const user = await getCurrentUser();
+  if (!user) redirect("/sign-in?next=/admin");
+  if (user.role !== "admin") redirect("/dashboard");
+  return user;
 }
 
 export async function signUp(

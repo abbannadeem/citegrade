@@ -16,7 +16,7 @@ export interface PlanLimits {
 export const PLANS: Record<Plan, PlanLimits> = {
   free: {
     name: "Free",
-    auditsPerDay: 3,
+    auditsPerDay: 1,
     sites: 1,
     historyDays: 7,
     monitoring: false,
@@ -52,7 +52,7 @@ export const PLANS: Record<Plan, PlanLimits> = {
   },
 };
 
-export const ANON_AUDITS_PER_DAY = 5;
+export const ANON_AUDITS_PER_DAY = 1;
 
 export function limitsFor(plan: Plan): PlanLimits {
   return PLANS[plan] ?? PLANS.free;

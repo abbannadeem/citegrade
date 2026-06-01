@@ -41,12 +41,12 @@ export default async function CheckoutPage() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-5">
-              <div className="rounded-lg border border-white/[0.08] bg-white/[0.02] p-5">
+              <div className="rounded-lg border border-line bg-surface p-5">
                 <div className="flex items-baseline gap-2">
                   <span className="text-4xl font-bold tabular">$29</span>
-                  <span className="text-zinc-500">/ month</span>
+                  <span className="text-subtle">/ month</span>
                 </div>
-                <p className="text-xs text-zinc-500 mt-2">
+                <p className="text-xs text-subtle mt-2">
                   Billed monthly · cancel anytime
                 </p>
               </div>
@@ -67,8 +67,8 @@ export default async function CheckoutPage() {
                   {billingEnabled ? "Continue to payment" : "Activate Pro (dev)"}
                 </Button>
               </form>
-              <p className="text-xs text-zinc-500 text-center">
-                <Link href="/pricing" className="hover:text-zinc-300">
+              <p className="text-xs text-subtle text-center">
+                <Link href="/pricing" className="hover:text-fg">
                   ← Back to pricing
                 </Link>
               </p>

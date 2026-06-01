@@ -25,7 +25,7 @@ export default async function DocsPage() {
           <h1 className="text-4xl sm:text-5xl font-bold tracking-tight">
             How we score.
           </h1>
-          <p className="mt-3 text-zinc-400 leading-relaxed">
+          <p className="mt-3 text-muted leading-relaxed">
             Citegrade&apos;s rubric is opinionated and open. Every point is
             traceable to a specific check. Every check has a documented why.
             This page is the canonical reference — it&apos;s also the page we
@@ -33,12 +33,12 @@ export default async function DocsPage() {
           </p>
 
           <div className="mt-10">
-            <h2 className="text-xs uppercase tracking-widest text-zinc-500 mb-3">
+            <h2 className="text-xs uppercase tracking-widest text-subtle mb-3">
               The six categories
             </h2>
             <Card className="overflow-hidden">
               <table className="w-full text-sm">
-                <tbody className="divide-y divide-white/[0.04]">
+                <tbody className="divide-y divide-line">
                   {(
                     Object.entries(CATEGORY_LABELS) as [
                       keyof typeof CATEGORY_LABELS,
@@ -46,17 +46,17 @@ export default async function DocsPage() {
                     ][]
                   ).map(([k, label]) => (
                     <tr key={k}>
-                      <td className="px-5 py-3 text-zinc-200">{label}</td>
-                      <td className="px-5 py-3 text-right font-mono text-indigo-300 tabular">
+                      <td className="px-5 py-3 text-fg">{label}</td>
+                      <td className="px-5 py-3 text-right font-mono text-primary tabular">
                         {CATEGORY_MAX[k]} pts
                       </td>
                     </tr>
                   ))}
-                  <tr className="bg-white/[0.03]">
-                    <td className="px-5 py-3 font-medium text-zinc-100">
+                  <tr className="bg-surface">
+                    <td className="px-5 py-3 font-medium text-fg">
                       Total
                     </td>
-                    <td className="px-5 py-3 text-right font-mono text-indigo-300 tabular font-bold">
+                    <td className="px-5 py-3 text-right font-mono text-primary tabular font-bold">
                       100 pts
                     </td>
                   </tr>
@@ -110,11 +110,11 @@ export default async function DocsPage() {
             />
           </div>
 
-          <div className="mt-16 rounded-xl border border-indigo-500/30 bg-indigo-500/[0.04] px-6 py-5">
-            <h3 className="text-sm font-semibold text-zinc-100">
+          <div className="mt-16 rounded-xl border border-primary/30 bg-primary-soft px-6 py-5">
+            <h3 className="text-sm font-semibold text-fg">
               A high score does not guarantee citation.
             </h3>
-            <p className="mt-2 text-sm text-zinc-400 leading-relaxed">
+            <p className="mt-2 text-sm text-muted leading-relaxed">
               The rubric reflects current best practice for LLM-friendliness as
               of May 2026. It is opinionated, not authoritative. A low score
               reliably predicts that LLMs will struggle to parse your content.
@@ -132,12 +132,12 @@ export default async function DocsPage() {
 function Section({ title, body }: { title: string; body: string[] }) {
   return (
     <section>
-      <h3 className="text-xl font-semibold tracking-tight text-zinc-100">
+      <h3 className="text-xl font-semibold tracking-tight text-fg">
         {title}
       </h3>
       <div className="mt-3 space-y-3">
         {body.map((p, i) => (
-          <p key={i} className="text-zinc-400 leading-relaxed">
+          <p key={i} className="text-muted leading-relaxed">
             {p}
           </p>
         ))}

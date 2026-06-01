@@ -16,7 +16,7 @@ const DropdownMenuContent = React.forwardRef<
       ref={ref}
       sideOffset={sideOffset}
       className={cn(
-        "z-50 min-w-[10rem] overflow-hidden rounded-lg border border-white/[0.08] bg-[#11111a] p-1 text-zinc-200 shadow-2xl",
+        "z-50 min-w-[10rem] overflow-hidden rounded-lg border border-line bg-surface p-1 text-fg shadow-pop",
         "animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0",
         className,
       )}
@@ -34,7 +34,7 @@ const DropdownMenuItem = React.forwardRef<
     ref={ref}
     className={cn(
       "relative flex cursor-pointer select-none items-center gap-2 rounded-md px-2.5 py-1.5 text-sm outline-none transition-colors",
-      "focus:bg-white/[0.06] focus:text-white",
+      "focus:bg-surface2 focus:text-fg",
       "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
       className,
     )}
@@ -49,7 +49,7 @@ const DropdownMenuSeparator = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DropdownMenuPrimitive.Separator
     ref={ref}
-    className={cn("my-1 h-px bg-white/[0.06]", className)}
+    className={cn("my-1 h-px bg-line", className)}
     {...props}
   />
 ));
@@ -63,7 +63,7 @@ const DropdownMenuLabel = React.forwardRef<
   <DropdownMenuPrimitive.Label
     ref={ref}
     className={cn(
-      "px-2.5 py-1.5 text-[10px] uppercase tracking-widest text-zinc-500",
+      "px-2.5 py-1.5 text-[10px] uppercase tracking-widest text-subtle",
       className,
     )}
     {...props}

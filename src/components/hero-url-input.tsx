@@ -14,7 +14,7 @@ function Submit() {
     <button
       type="submit"
       disabled={pending}
-      className="absolute right-2 top-1/2 -translate-y-1/2 h-12 px-5 rounded-lg bg-indigo-500 hover:bg-indigo-400 text-white font-medium text-sm tracking-tight shadow-[0_0_24px_rgba(94,92,230,0.35)] transition-all disabled:opacity-60 disabled:cursor-not-allowed flex items-center gap-2 active:scale-[0.97]"
+      className="absolute right-2 top-1/2 -translate-y-1/2 h-12 px-5 rounded-lg bg-primary hover:bg-primary-hover text-primary-fg font-medium text-sm tracking-tight shadow-md transition-all disabled:opacity-60 disabled:cursor-not-allowed flex items-center gap-2 active:scale-[0.97]"
     >
       {pending ? (
         <>
@@ -46,21 +46,20 @@ export function HeroUrlInput() {
           autoComplete="url"
           placeholder="https://your-site.com"
           aria-label="Website URL to audit"
-          className="w-full h-16 rounded-xl border border-white/[0.08] bg-white/[0.03] backdrop-blur-xl pl-5 pr-32 font-mono text-base text-zinc-100 placeholder:text-zinc-600 focus:border-indigo-500/40 focus:bg-white/[0.05] focus:outline-none focus:ring-2 focus:ring-indigo-500/20 shadow-[0_0_40px_rgba(94,92,230,0.08)] transition-all"
+          className="w-full h-16 rounded-xl border border-line bg-surface pl-5 pr-32 font-mono text-base text-fg placeholder:text-subtle focus:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/15 shadow-card transition-all"
         />
         <Submit />
       </form>
       {state.status === "error" ? (
-        <p className="mt-3 text-sm text-rose-400 font-mono" role="alert">
+        <p className="mt-3 text-sm text-danger font-mono" role="alert">
           {state.message}
         </p>
       ) : (
-        <p className="mt-3 text-xs text-zinc-500">
+        <p className="mt-3 text-xs text-muted">
           Free · no signup · 100-point score in under 30 seconds. We scan your
-          homepage,{" "}
-          <code className="font-mono text-zinc-400">/llms.txt</code>,{" "}
-          <code className="font-mono text-zinc-400">/robots.txt</code>, and{" "}
-          <code className="font-mono text-zinc-400">/sitemap.xml</code>.
+          homepage, <code className="font-mono text-fg">/llms.txt</code>,{" "}
+          <code className="font-mono text-fg">/robots.txt</code>, and{" "}
+          <code className="font-mono text-fg">/sitemap.xml</code>.
         </p>
       )}
     </motion.div>

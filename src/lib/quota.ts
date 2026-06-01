@@ -69,13 +69,14 @@ export async function checkAuditQuota(opts: {
       type: "audit",
       sinceMs: since,
     });
+    const n = limits.auditsPerDay;
     return {
-      allowed: used < limits.auditsPerDay,
+      allowed: used < n,
       used,
-      limit: limits.auditsPerDay,
+      limit: n,
       reason:
-        used >= limits.auditsPerDay
-          ? `Daily limit of ${limits.auditsPerDay} audits reached. Upgrade to Pro for unlimited.`
+        used >= n
+          ? `You've used your free audit${n === 1 ? "" : "s"} for today (${n}/day). Upgrade to Pro for unlimited audits.`
           : undefined,
     };
   }
@@ -83,13 +84,14 @@ export async function checkAuditQuota(opts: {
   // anonymous
   const ip = opts.ip ?? "unknown";
   const used = await countEvents({ ip, type: "audit", sinceMs: since });
+  const n = ANON_AUDITS_PER_DAY;
   return {
-    allowed: used < ANON_AUDITS_PER_DAY,
+    allowed: used < n,
     used,
-    limit: ANON_AUDITS_PER_DAY,
+    limit: n,
     reason:
-      used >= ANON_AUDITS_PER_DAY
-        ? `You've used your ${ANON_AUDITS_PER_DAY} free audits today. Sign up for more.`
+      used >= n
+        ? `You've used your free audit${n === 1 ? "" : "s"} for today. Create a free account to save reports and track sites — or upgrade to Pro for unlimited audits.`
         : undefined,
   };
 }

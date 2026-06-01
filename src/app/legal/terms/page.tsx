@@ -11,29 +11,29 @@ export default async function TermsPage() {
       <MarketingHeader isAuthed={!!user} />
       <main className="flex-1 px-6 py-16">
         <div className="max-w-2xl mx-auto">
-          <p className="text-xs uppercase tracking-widest text-zinc-500 mb-3">
+          <p className="text-xs uppercase tracking-widest text-subtle mb-3">
             Legal
           </p>
           <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">
             Terms of service
           </h1>
-          <p className="mt-2 text-sm text-zinc-500 font-mono">
+          <p className="mt-2 text-sm text-subtle font-mono">
             Last updated 2026-05-19
           </p>
-          <div className="mt-8 space-y-5 text-zinc-300 leading-relaxed text-sm">
+          <div className="mt-8 space-y-5 text-fg leading-relaxed text-sm">
             <p>
               By using Citegrade you agree to use the service in good faith.
               Don&apos;t use it to harm others, abuse the rate limits, or
               scrape audit data programmatically without a paid API plan.
             </p>
-            <h2 className="text-lg font-semibold text-zinc-100 mt-8">
+            <h2 className="text-lg font-semibold text-fg mt-8">
               Free tier
             </h2>
             <p>
               The free tier is offered as-is, with rate limits. No SLA, no
               guarantee of availability or accuracy.
             </p>
-            <h2 className="text-lg font-semibold text-zinc-100 mt-8">
+            <h2 className="text-lg font-semibold text-fg mt-8">
               Paid tiers
             </h2>
             <p>
@@ -41,7 +41,7 @@ export default async function TermsPage() {
               cancel anytime from Settings → Billing. Refunds are issued
               pro-rata for unused time, no questions asked.
             </p>
-            <h2 className="text-lg font-semibold text-zinc-100 mt-8">
+            <h2 className="text-lg font-semibold text-fg mt-8">
               Audit accuracy
             </h2>
             <p>
@@ -50,7 +50,7 @@ export default async function TermsPage() {
               prove invisibility. Use Citegrade as a directional signal, not
               a contract.
             </p>
-            <h2 className="text-lg font-semibold text-zinc-100 mt-8">
+            <h2 className="text-lg font-semibold text-fg mt-8">
               Liability
             </h2>
             <p>
@@ -58,7 +58,7 @@ export default async function TermsPage() {
               resulting from acting on audit recommendations, third-party
               services, or service outages.
             </p>
-            <p className="text-xs text-zinc-500 mt-12 pt-6 border-t border-white/[0.06]">
+            <p className="text-xs text-subtle mt-12 pt-6 border-t border-line">
               This is a v1 placeholder. Production legal generated via Termly
               before paid plans go live.
             </p>

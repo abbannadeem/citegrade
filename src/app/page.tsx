@@ -111,12 +111,12 @@ export default async function Home() {
             </Badge>
             <h1 className="text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.02]">
               Score your site&apos;s{" "}
-              <span className="bg-gradient-to-r from-indigo-400 via-violet-300 to-indigo-400 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
                 AI search visibility
               </span>{" "}
               in 60 seconds.
             </h1>
-            <p className="mt-6 text-base sm:text-xl text-zinc-400 leading-relaxed max-w-2xl mx-auto">
+            <p className="mt-6 text-base sm:text-xl text-muted leading-relaxed max-w-2xl mx-auto">
               Citegrade runs a 100-point audit across the signals that decide
               whether ChatGPT, Perplexity, Claude, and Google AI cite your
               pages — free, no signup, transparent rubric.
@@ -124,15 +124,15 @@ export default async function Home() {
             <div className="mt-10 max-w-xl mx-auto">
               <HeroUrlInput />
             </div>
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-zinc-500 font-mono">
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-subtle font-mono">
               <span className="inline-flex items-center gap-1.5">
-                <Check className="w-3 h-3 text-emerald-400" /> No credit card
+                <Check className="w-3 h-3 text-success" /> No credit card
               </span>
               <span className="inline-flex items-center gap-1.5">
-                <Check className="w-3 h-3 text-emerald-400" /> No email required
+                <Check className="w-3 h-3 text-success" /> No email required
               </span>
               <span className="inline-flex items-center gap-1.5">
-                <Check className="w-3 h-3 text-emerald-400" /> Shareable report
+                <Check className="w-3 h-3 text-success" /> Shareable report
               </span>
             </div>
           </div>
@@ -141,7 +141,7 @@ export default async function Home() {
         {recent.length > 0 && (
           <section className="px-6 -mt-12 mb-24 relative">
             <div className="max-w-4xl mx-auto">
-              <p className="text-center text-xs uppercase tracking-widest text-zinc-500 mb-6">
+              <p className="text-center text-xs uppercase tracking-widest text-subtle mb-6">
                 Recent public audits
               </p>
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -149,17 +149,17 @@ export default async function Home() {
                   <Link
                     key={r.id}
                     href={`/r/${r.id}`}
-                    className="block rounded-xl border border-white/[0.06] bg-[#0d0d14]/80 backdrop-blur hover:border-indigo-500/40 hover:bg-[#11111a] px-4 py-3 transition-all group"
+                    className="block rounded-xl border border-line bg-surface/80 backdrop-blur hover:border-primary/40 hover:bg-surface px-4 py-3 transition-all group"
                   >
                     <div className="flex items-center justify-between gap-3">
-                      <span className="font-mono text-sm text-zinc-200 truncate group-hover:text-indigo-300 transition-colors">
+                      <span className="font-mono text-sm text-fg truncate group-hover:text-primary transition-colors">
                         {hostOf(r.url)}
                       </span>
                       <ScorePill score={r.score} grade={r.grade} size="sm" />
                     </div>
                     <div className="mt-3 flex items-center justify-between">
                       <Sparkline values={[r.score]} width={80} height={20} />
-                      <span className="text-[10px] text-zinc-500 font-mono">
+                      <span className="text-[10px] text-subtle font-mono">
                         {relativeTime(r.fetchedAt)}
                       </span>
                     </div>
@@ -172,11 +172,11 @@ export default async function Home() {
 
         <section
           aria-labelledby="features"
-          className="px-6 py-24 border-t border-white/[0.04]"
+          className="px-6 py-24 border-t border-line"
         >
           <div className="max-w-5xl mx-auto">
             <div className="max-w-2xl mb-16">
-              <p className="text-xs uppercase tracking-widest text-zinc-500 mb-3">
+              <p className="text-xs uppercase tracking-widest text-subtle mb-3">
                 What we measure
               </p>
               <h2
@@ -184,22 +184,22 @@ export default async function Home() {
                 className="text-3xl sm:text-5xl font-semibold tracking-tight leading-tight"
               >
                 Six categories. Every check{" "}
-                <span className="text-zinc-500">explained, scored, fixable.</span>
+                <span className="text-subtle">explained, scored, fixable.</span>
               </h2>
             </div>
-            <div className="grid gap-px sm:grid-cols-2 lg:grid-cols-3 bg-white/[0.06] rounded-2xl overflow-hidden border border-white/[0.06]">
+            <div className="grid gap-px sm:grid-cols-2 lg:grid-cols-3 bg-surface2 rounded-2xl overflow-hidden border border-line">
               {FEATURES.map((f) => {
                 const Icon = f.icon;
                 return (
                   <div
                     key={f.title}
-                    className="bg-[#0a0a0f] p-6 hover:bg-[#0d0d14] transition-colors"
+                    className="bg-bg p-6 hover:bg-surface transition-colors"
                   >
-                    <div className="w-10 h-10 rounded-lg bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center mb-4">
-                      <Icon className="w-4 h-4 text-indigo-300" />
+                    <div className="w-10 h-10 rounded-lg bg-primary-soft border border-primary/20 flex items-center justify-center mb-4">
+                      <Icon className="w-4 h-4 text-primary" />
                     </div>
-                    <h3 className="text-zinc-100 font-medium">{f.title}</h3>
-                    <p className="mt-1.5 text-sm text-zinc-400 leading-relaxed">
+                    <h3 className="text-fg font-medium">{f.title}</h3>
+                    <p className="mt-1.5 text-sm text-muted leading-relaxed">
                       {f.desc}
                     </p>
                   </div>
@@ -211,12 +211,12 @@ export default async function Home() {
 
         <section
           aria-labelledby="rubric-heading"
-          className="px-6 py-24 border-t border-white/[0.04]"
+          className="px-6 py-24 border-t border-line"
         >
           <div className="max-w-5xl mx-auto">
             <div className="grid lg:grid-cols-2 gap-12 items-start">
               <div>
-                <p className="text-xs uppercase tracking-widest text-zinc-500 mb-3">
+                <p className="text-xs uppercase tracking-widest text-subtle mb-3">
                   The 100-point rubric
                 </p>
                 <h2
@@ -225,13 +225,13 @@ export default async function Home() {
                 >
                   Transparent. Open. No black box.
                 </h2>
-                <p className="mt-4 text-zinc-400 leading-relaxed">
+                <p className="mt-4 text-muted leading-relaxed">
                   Every category contributes a fixed share of the 100. Every
                   check is documented. Every failure includes a concrete fix.
                   Read the full methodology in{" "}
                   <Link
                     href="/docs"
-                    className="text-indigo-300 hover:text-indigo-200 underline underline-offset-2"
+                    className="text-primary hover:text-primary underline underline-offset-2"
                   >
                     /docs
                   </Link>
@@ -247,17 +247,17 @@ export default async function Home() {
                 ).map(([key, label]) => (
                   <div
                     key={key}
-                    className="rounded-lg border border-white/[0.06] bg-white/[0.02] px-4 py-3 flex items-center justify-between"
+                    className="rounded-lg border border-line bg-surface px-4 py-3 flex items-center justify-between"
                   >
-                    <span className="text-zinc-200">{label}</span>
-                    <span className="font-mono text-sm text-indigo-300 tabular">
+                    <span className="text-fg">{label}</span>
+                    <span className="font-mono text-sm text-primary tabular">
                       {CATEGORY_MAX[key]} pts
                     </span>
                   </div>
                 ))}
-                <div className="rounded-lg border border-indigo-500/30 bg-indigo-500/5 px-4 py-3 flex items-center justify-between">
-                  <span className="text-zinc-100 font-medium">Total</span>
-                  <span className="font-mono text-sm text-indigo-300 tabular">
+                <div className="rounded-lg border border-primary/30 bg-primary-soft px-4 py-3 flex items-center justify-between">
+                  <span className="text-fg font-medium">Total</span>
+                  <span className="font-mono text-sm text-primary tabular">
                     100 pts
                   </span>
                 </div>
@@ -268,7 +268,7 @@ export default async function Home() {
 
         <section
           aria-labelledby="cta-heading"
-          className="px-6 py-24 border-t border-white/[0.04]"
+          className="px-6 py-24 border-t border-line"
         >
           <div className="max-w-3xl mx-auto text-center relative">
             <div className="absolute inset-0 bg-aurora opacity-50 pointer-events-none" />
@@ -278,9 +278,9 @@ export default async function Home() {
                 className="text-3xl sm:text-5xl font-semibold tracking-tight"
               >
                 Stop guessing.{" "}
-                <span className="text-indigo-300">Get your score.</span>
+                <span className="text-primary">Get your score.</span>
               </h2>
-              <p className="mt-4 text-zinc-400">
+              <p className="mt-4 text-muted">
                 The audit takes under a minute. Pricing later, score first.
               </p>
               <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
@@ -297,10 +297,10 @@ export default async function Home() {
 
         <section
           aria-labelledby="faq-heading"
-          className="px-6 py-24 border-t border-white/[0.04]"
+          className="px-6 py-24 border-t border-line"
         >
           <div className="max-w-3xl mx-auto">
-            <p className="text-xs uppercase tracking-widest text-zinc-500 mb-3">
+            <p className="text-xs uppercase tracking-widest text-subtle mb-3">
               Frequently asked
             </p>
             <h2
@@ -313,15 +313,15 @@ export default async function Home() {
               {FAQS.map((f) => (
                 <details
                   key={f.q}
-                  className="group rounded-xl border border-white/[0.06] bg-white/[0.02] overflow-hidden"
+                  className="group rounded-xl border border-line bg-surface overflow-hidden"
                 >
-                  <summary className="px-5 py-4 cursor-pointer list-none flex items-center justify-between gap-4 hover:bg-white/[0.02]">
-                    <span className="font-medium text-zinc-100">{f.q}</span>
-                    <span className="text-zinc-500 group-open:rotate-45 transition-transform text-lg leading-none">
+                  <summary className="px-5 py-4 cursor-pointer list-none flex items-center justify-between gap-4 hover:bg-surface2">
+                    <span className="font-medium text-fg">{f.q}</span>
+                    <span className="text-subtle group-open:rotate-45 transition-transform text-lg leading-none">
                       +
                     </span>
                   </summary>
-                  <div className="px-5 pb-5 text-sm text-zinc-400 leading-relaxed">
+                  <div className="px-5 pb-5 text-sm text-muted leading-relaxed">
                     {f.a}
                   </div>
                 </details>

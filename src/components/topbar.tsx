@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { Bell, ChevronDown, LogOut, Settings } from "lucide-react";
+import { Bell, ChevronDown, LogOut, Settings, ShieldCheck } from "lucide-react";
 import type { SessionUser } from "@/lib/auth";
 import {
   DropdownMenu,
@@ -13,39 +13,41 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown";
 import { Badge } from "@/components/ui/badge";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { signOutAction } from "@/app/(auth)/actions";
 
 export function Topbar({ user }: { user: SessionUser }) {
   return (
-    <header className="h-14 border-b border-white/[0.06] bg-[#09090f]/60 backdrop-blur-md sticky top-0 z-30 flex items-center justify-between px-4">
-      <div className="flex items-center gap-2 text-xs text-zinc-500">
+    <header className="h-14 border-b border-line bg-bg/70 backdrop-blur-md sticky top-0 z-30 flex items-center justify-between px-4">
+      <div className="flex items-center gap-2 text-xs text-muted">
         <span>Personal workspace</span>
       </div>
       <div className="flex items-center gap-2">
         <SearchHint />
+        <ThemeToggle />
         <button
           aria-label="Notifications"
-          className="p-2 rounded-md text-zinc-500 hover:text-zinc-200 hover:bg-white/[0.06] transition-colors"
+          className="p-2 rounded-md text-subtle hover:text-fg hover:bg-surface2 transition-colors"
         >
           <Bell className="w-4 h-4" />
         </button>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <button className="flex items-center gap-2 rounded-md px-2 py-1.5 hover:bg-white/[0.06] transition-colors">
-              <div className="w-7 h-7 rounded-full bg-gradient-to-br from-indigo-500 to-violet-500 flex items-center justify-center text-xs font-semibold">
+            <button className="flex items-center gap-2 rounded-md px-2 py-1.5 hover:bg-surface2 transition-colors">
+              <div className="w-7 h-7 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-xs font-semibold text-white">
                 {user.name.charAt(0).toUpperCase()}
               </div>
-              <ChevronDown className="w-3 h-3 text-zinc-500" />
+              <ChevronDown className="w-3 h-3 text-subtle" />
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="min-w-[220px]">
             <DropdownMenuLabel>Signed in</DropdownMenuLabel>
             <div className="px-2.5 pb-2">
-              <p className="text-sm text-zinc-200 truncate">{user.name}</p>
-              <p className="text-xs text-zinc-500 truncate">{user.email}</p>
+              <p className="text-sm text-fg truncate">{user.name}</p>
+              <p className="text-xs text-muted truncate">{user.email}</p>
               <div className="mt-2">
-                <Badge variant={user.plan === "pro" ? "primary" : "outline"}>
-                  {user.plan === "pro" ? "Pro" : "Free"}
+                <Badge variant={user.plan !== "free" ? "primary" : "outline"}>
+                  {user.plan === "free" ? "Free" : user.plan === "pro" ? "Pro" : "Agency"}
                 </Badge>
               </div>
             </div>
@@ -55,9 +57,16 @@ export function Topbar({ user }: { user: SessionUser }) {
                 <Settings className="w-3.5 h-3.5" /> Account settings
               </Link>
             </DropdownMenuItem>
-            {user.plan !== "pro" && (
+            {user.role === "admin" && (
               <DropdownMenuItem asChild>
-                <Link href="/pricing" className="cursor-pointer text-indigo-300">
+                <Link href="/admin" className="cursor-pointer text-primary">
+                  <ShieldCheck className="w-3.5 h-3.5" /> Admin panel
+                </Link>
+              </DropdownMenuItem>
+            )}
+            {user.plan === "free" && (
+              <DropdownMenuItem asChild>
+                <Link href="/pricing" className="cursor-pointer text-primary">
                   Upgrade to Pro
                 </Link>
               </DropdownMenuItem>
@@ -85,10 +94,10 @@ function SearchHint() {
           new KeyboardEvent("keydown", { key: "k", metaKey: true, ctrlKey: true }),
         )
       }
-      className="hidden sm:flex items-center gap-2 h-8 px-2.5 rounded-md border border-white/[0.06] bg-white/[0.02] text-xs text-zinc-500 hover:text-zinc-300 hover:border-white/[0.12] transition-colors"
+      className="hidden sm:flex items-center gap-2 h-8 px-2.5 rounded-md border border-line bg-surface text-xs text-subtle hover:text-fg hover:border-line-strong transition-colors"
     >
       <span>Search…</span>
-      <kbd className="font-mono text-[10px] px-1 py-0.5 rounded border border-white/[0.08] text-zinc-500">
+      <kbd className="font-mono text-[10px] px-1 py-0.5 rounded border border-line">
         ⌘K
       </kbd>
     </button>

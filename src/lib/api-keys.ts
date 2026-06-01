@@ -84,6 +84,7 @@ export async function resolveApiKey(
     email: u.email,
     name: u.name || u.email,
     plan: u.plan,
+    role: u.role,
     image: u.image,
     stripeCustomerId: u.stripeCustomerId,
     createdAt: u.createdAt,
