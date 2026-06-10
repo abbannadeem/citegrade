@@ -126,6 +126,21 @@ export async function fetchText(
   url: string,
   timeoutMs = 8_000,
 ): Promise<{ status: number; body: string } | null> {
+  // Re-apply SSRF guard: external fetches must NOT bypass the private-host
+  // blocklist that the main page fetch enforces.
+  try {
+    const parsed = new URL(url);
+    if (!/^https?:$/i.test(parsed.protocol)) return null;
+    if (
+      isPrivateHost(parsed.hostname) &&
+      process.env.CITEGRADE_ALLOW_PRIVATE !== "1"
+    ) {
+      return null;
+    }
+  } catch {
+    return null;
+  }
+
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
   try {

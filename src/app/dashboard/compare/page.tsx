@@ -103,8 +103,15 @@ export default async function ComparePage({
               </thead>
               <tbody className="divide-y divide-line">
                 {(Object.keys(CATEGORY_LABELS) as CheckCategory[]).map((cat) => {
-                  const ea = ra.categories.find((c) => c.category === cat)!;
-                  const eb = rb.categories.find((c) => c.category === cat)!;
+                  // Resilient to stale payloads where a category may be missing.
+                  const ea = ra.categories.find((c) => c.category === cat) ?? {
+                    earned: 0,
+                    max: CATEGORY_MAX[cat],
+                  };
+                  const eb = rb.categories.find((c) => c.category === cat) ?? {
+                    earned: 0,
+                    max: CATEGORY_MAX[cat],
+                  };
                   const delta = eb.earned - ea.earned;
                   const tone =
                     delta > 0

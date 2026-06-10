@@ -1,331 +1,422 @@
+import Image from "next/image";
 import Link from "next/link";
 import { HeroUrlInput } from "@/components/hero-url-input";
 import { JsonLd } from "@/components/json-ld";
 import {
-  breadcrumbSchema,
   faqSchema,
-  howToSchema,
   softwareApplicationSchema,
+  howToSchema,
+  breadcrumbSchema,
 } from "@/lib/site-schema";
-import { siteUrl } from "@/lib/site";
+import { SITE, siteUrl } from "@/lib/site";
+import { GIGS } from "@/lib/gigs";
 import { CATEGORY_LABELS, CATEGORY_MAX } from "@/lib/audit/types";
 import { listRecentReports } from "@/lib/storage";
-import { ScorePill } from "@/components/score-pill";
-import { Sparkline } from "@/components/sparkline";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { ArrowUpRight, Check, FileText, Layers, Search, ShieldCheck, Sparkles, Zap } from "lucide-react";
+import { Eyebrow } from "@/components/eyebrow";
 import { MarketingHeader } from "@/components/marketing-header";
 import { MarketingFooter } from "@/components/marketing-footer";
 import { getCurrentUser } from "@/lib/auth";
-import { hostOf, relativeTime } from "@/lib/utils";
-import {
-  Bot,
-  Check,
-  FileCode,
-  Gauge,
-  Layers,
-  Radar,
-  Sparkles,
-  Zap,
-} from "lucide-react";
+import { hostOf } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
-const FAQS = [
-  {
-    q: "What is AI SEO?",
-    a: "AI SEO (also called GEO — Generative Engine Optimization) is the practice of structuring a website so that LLMs like ChatGPT, Claude, Perplexity, and Google AI Overview can read, understand, and cite its content. It extends classical SEO with llms.txt, richer JSON-LD schema, and content patterns optimized for extractive citation.",
-  },
-  {
-    q: "Why does this score matter?",
-    a: "Search is splitting. Traditional search rewards keyword authority; AI search rewards entity clarity, structured data, and citation-ready content. Sites that score below 60 on Citegrade routinely fail to appear in LLM answers — even when they rank #1 on Google for the same query.",
-  },
-  {
-    q: "Is llms.txt actually used by ChatGPT or Claude?",
-    a: "No major LLM provider has publicly committed to consuming llms.txt during training or retrieval as of May 2026. It is currently signal-without-consumer, used mainly by agent frameworks and RAG pipelines. Citegrade scores it because (1) adoption is climbing, (2) it costs nothing to ship, and (3) shipping a high-quality one correlates with other signals LLMs do use.",
-  },
-  {
-    q: "How accurate is the score?",
-    a: "The 100-point rubric is opinionated and open. Every point is traceable. It reflects best-practice consensus on what makes content LLM-readable as of May 2026. A high score does not guarantee citation, but a low score reliably predicts that LLMs will struggle to parse and reuse your content.",
-  },
-  {
-    q: "Do I need an account?",
-    a: "No. The audit runs free, no signup, no credit card. Create an account only if you want to save reports, track scores over time, or monitor multiple sites with weekly auto-scans.",
-  },
-];
+const HERO_IMG =
+  "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=1400&q=80&auto=format&fit=crop";
 
-const FEATURES = [
+const FAQ = [
   {
-    icon: Gauge,
-    title: "100-point transparent score",
-    desc: "Every point is traceable to a specific check. No black-box scoring, no \"AI confidence\" hand-waving.",
+    q: "Is the audit really free?",
+    a: "Yes. One audit per day, no card. The same engine that runs the paid plan — just rate-limited. The free tier is the trial.",
   },
   {
-    icon: Radar,
-    title: "Six-category breakdown",
-    desc: "llms.txt · JSON-LD schema · semantic HTML · meta tags · crawlability · E-E-A-T signals. Each scored independently.",
+    q: "What does the score actually mean?",
+    a: "It's a composite of six categories that LLMs measurably use to read and cite a page: llms.txt, JSON-LD schema, semantic HTML, meta tags, crawlability with AI bot rules, and E-E-A-T signals. The full math is published at /docs.",
   },
   {
-    icon: Bot,
-    title: "AI-bot-aware",
-    desc: "Checks for explicit rules for GPTBot, ClaudeBot, PerplexityBot, Google-Extended, and Applebot-Extended in robots.txt.",
+    q: "Will my score change if I fix things?",
+    a: "Yes. Re-audit after each change — the diff is visible. Pro re-audits weekly automatically and emails the delta.",
   },
   {
-    icon: Layers,
-    title: "Schema for LLM citation",
-    desc: "Validates Organization + Person + sameAs networks — what LLMs actually use to disambiguate your identity.",
+    q: "Why not just trust Google?",
+    a: "Google AI Overview is one consumer. ChatGPT, Claude, and Perplexity each crawl differently. This scores readiness across the set, not just one.",
   },
   {
-    icon: FileCode,
-    title: "llms.txt spec validation",
-    desc: "Not just presence — checks the file follows llmstxt.org spec, has a real summary, and ships with llms-full.txt.",
-  },
-  {
-    icon: Zap,
-    title: "Results in under 30 seconds",
-    desc: "We fetch your homepage and parse it server-side. Shareable report URL, dynamic OG card per report.",
+    q: "Who builds this?",
+    a: "Abban Nadeem, alone, in public. Methodology and code are open. Inbox is the support channel.",
   },
 ];
 
 export default async function Home() {
-  const recent = await listRecentReports(5);
+  const recent = await listRecentReports(6);
   const user = await getCurrentUser();
   return (
     <>
       <JsonLd data={softwareApplicationSchema()} />
       <JsonLd data={faqSchema()} />
       <JsonLd data={howToSchema()} />
-      <JsonLd
-        data={breadcrumbSchema([{ name: "Home", url: siteUrl("/") }])}
-      />
+      <JsonLd data={breadcrumbSchema([{ name: "Home", url: siteUrl("/") }])} />
 
       <MarketingHeader isAuthed={!!user} />
 
       <main className="flex-1">
-        <section className="relative overflow-hidden pt-20 pb-24 sm:pt-28 sm:pb-32 px-6">
-          <div className="absolute inset-0 bg-aurora pointer-events-none" />
-          <div className="absolute inset-0 bg-grid pointer-events-none" />
-          <div className="relative max-w-3xl mx-auto text-center">
-            <Badge variant="primary" className="mb-6">
-              <Sparkles className="w-3 h-3" /> v1.0 · open beta · free forever
-            </Badge>
-            <h1 className="text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.02]">
-              Score your site&apos;s{" "}
-              <span className="bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
-                AI search visibility
-              </span>{" "}
-              in 60 seconds.
-            </h1>
-            <p className="mt-6 text-base sm:text-xl text-muted leading-relaxed max-w-2xl mx-auto">
-              Citegrade runs a 100-point audit across the signals that decide
-              whether ChatGPT, Perplexity, Claude, and Google AI cite your
-              pages — free, no signup, transparent rubric.
-            </p>
-            <div className="mt-10 max-w-xl mx-auto">
-              <HeroUrlInput />
-            </div>
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-subtle font-mono">
-              <span className="inline-flex items-center gap-1.5">
-                <Check className="w-3 h-3 text-success" /> No credit card
-              </span>
-              <span className="inline-flex items-center gap-1.5">
-                <Check className="w-3 h-3 text-success" /> No email required
-              </span>
-              <span className="inline-flex items-center gap-1.5">
-                <Check className="w-3 h-3 text-success" /> Shareable report
-              </span>
-            </div>
-          </div>
-        </section>
-
-        {recent.length > 0 && (
-          <section className="px-6 -mt-12 mb-24 relative">
-            <div className="max-w-4xl mx-auto">
-              <p className="text-center text-xs uppercase tracking-widest text-subtle mb-6">
-                Recent public audits
-              </p>
-              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                {recent.slice(0, 3).map((r) => (
-                  <Link
-                    key={r.id}
-                    href={`/r/${r.id}`}
-                    className="block rounded-xl border border-line bg-surface/80 backdrop-blur hover:border-primary/40 hover:bg-surface px-4 py-3 transition-all group"
-                  >
-                    <div className="flex items-center justify-between gap-3">
-                      <span className="font-mono text-sm text-fg truncate group-hover:text-primary transition-colors">
-                        {hostOf(r.url)}
-                      </span>
-                      <ScorePill score={r.score} grade={r.grade} size="sm" />
-                    </div>
-                    <div className="mt-3 flex items-center justify-between">
-                      <Sparkline values={[r.score]} width={80} height={20} />
-                      <span className="text-[10px] text-subtle font-mono">
-                        {relativeTime(r.fetchedAt)}
-                      </span>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            </div>
-          </section>
-        )}
-
-        <section
-          aria-labelledby="features"
-          className="px-6 py-24 border-t border-line"
-        >
-          <div className="max-w-5xl mx-auto">
-            <div className="max-w-2xl mb-16">
-              <p className="text-xs uppercase tracking-widest text-subtle mb-3">
-                What we measure
-              </p>
-              <h2
-                id="features"
-                className="text-3xl sm:text-5xl font-semibold tracking-tight leading-tight"
-              >
-                Six categories. Every check{" "}
-                <span className="text-subtle">explained, scored, fixable.</span>
-              </h2>
-            </div>
-            <div className="grid gap-px sm:grid-cols-2 lg:grid-cols-3 bg-surface2 rounded-2xl overflow-hidden border border-line">
-              {FEATURES.map((f) => {
-                const Icon = f.icon;
-                return (
-                  <div
-                    key={f.title}
-                    className="bg-bg p-6 hover:bg-surface transition-colors"
-                  >
-                    <div className="w-10 h-10 rounded-lg bg-primary-soft border border-primary/20 flex items-center justify-center mb-4">
-                      <Icon className="w-4 h-4 text-primary" />
-                    </div>
-                    <h3 className="text-fg font-medium">{f.title}</h3>
-                    <p className="mt-1.5 text-sm text-muted leading-relaxed">
-                      {f.desc}
-                    </p>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </section>
-
-        <section
-          aria-labelledby="rubric-heading"
-          className="px-6 py-24 border-t border-line"
-        >
-          <div className="max-w-5xl mx-auto">
-            <div className="grid lg:grid-cols-2 gap-12 items-start">
-              <div>
-                <p className="text-xs uppercase tracking-widest text-subtle mb-3">
-                  The 100-point rubric
-                </p>
-                <h2
-                  id="rubric-heading"
-                  className="text-3xl sm:text-4xl font-semibold tracking-tight leading-tight"
-                >
-                  Transparent. Open. No black box.
-                </h2>
-                <p className="mt-4 text-muted leading-relaxed">
-                  Every category contributes a fixed share of the 100. Every
-                  check is documented. Every failure includes a concrete fix.
-                  Read the full methodology in{" "}
-                  <Link
-                    href="/docs"
-                    className="text-primary hover:text-primary underline underline-offset-2"
-                  >
-                    /docs
-                  </Link>
-                  .
-                </p>
-              </div>
-              <div className="space-y-2">
-                {(
-                  Object.entries(CATEGORY_LABELS) as [
-                    keyof typeof CATEGORY_LABELS,
-                    string,
-                  ][]
-                ).map(([key, label]) => (
-                  <div
-                    key={key}
-                    className="rounded-lg border border-line bg-surface px-4 py-3 flex items-center justify-between"
-                  >
-                    <span className="text-fg">{label}</span>
-                    <span className="font-mono text-sm text-primary tabular">
-                      {CATEGORY_MAX[key]} pts
-                    </span>
-                  </div>
-                ))}
-                <div className="rounded-lg border border-primary/30 bg-primary-soft px-4 py-3 flex items-center justify-between">
-                  <span className="text-fg font-medium">Total</span>
-                  <span className="font-mono text-sm text-primary tabular">
-                    100 pts
+        {/* ─── HERO ─────────────────────────────────────────────── */}
+        <section className="bg-aurora relative overflow-hidden">
+          <div className="max-w-6xl mx-auto px-6 pt-20 pb-24 lg:pt-28 lg:pb-32">
+            <div className="grid lg:grid-cols-12 gap-10 lg:gap-16 items-center">
+              <div className="lg:col-span-7 max-w-2xl">
+                <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full border border-line bg-surface/70 backdrop-blur-sm text-[11px] font-mono text-muted mb-7">
+                  <span className="w-1.5 h-1.5 rounded-full bg-success animate-pulse" />
+                  v1.2 · free for one site, forever
+                </div>
+                <h1 className="text-5xl sm:text-6xl lg:text-[68px] font-medium leading-[1.02] tracking-[-0.03em] text-fg">
+                  See your site
+                  <br />
+                  <span className="bg-gradient-to-br from-fg via-fg to-muted bg-clip-text text-transparent">
+                    through an AI&apos;s eyes.
                   </span>
+                </h1>
+                <p className="mt-6 text-lg text-muted leading-relaxed max-w-xl">
+                  A 100-point audit of how ChatGPT, Claude, Perplexity, and
+                  Google AI read your pages — across llms.txt, schema, semantic
+                  HTML, meta, crawlability, and E-E-A-T. Free, sixty seconds, no
+                  signup.
+                </p>
+                <div className="mt-9">
+                  <HeroUrlInput />
+                </div>
+                <div className="mt-7 flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-subtle">
+                  <span className="inline-flex items-center gap-1.5">
+                    <Check className="w-3.5 h-3.5 text-success" /> No card
+                  </span>
+                  <span className="inline-flex items-center gap-1.5">
+                    <Check className="w-3.5 h-3.5 text-success" /> No signup
+                  </span>
+                  <span className="inline-flex items-center gap-1.5">
+                    <Check className="w-3.5 h-3.5 text-success" /> Shareable
+                    report
+                  </span>
+                  <span className="inline-flex items-center gap-1.5">
+                    <Check className="w-3.5 h-3.5 text-success" /> Auditor
+                    scores 95/100 itself
+                  </span>
+                </div>
+              </div>
+
+              {/* Hero visual — Unsplash photo with brand wash */}
+              <div className="lg:col-span-5 hidden lg:block">
+                <div className="relative rounded-2xl overflow-hidden border border-line shadow-card aspect-[4/5] bg-surface2">
+                  <Image
+                    src={HERO_IMG}
+                    alt="A focused workspace — the kind of attention modern AI search demands"
+                    fill
+                    sizes="(max-width: 1024px) 0px, 500px"
+                    className="object-cover"
+                    priority
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary/30 via-transparent to-accent/15" />
+                  <div className="absolute inset-0 mix-blend-multiply bg-[radial-gradient(ellipse_at_top_left,transparent,rgba(0,0,0,0.18))]" />
+                  {/* Floating score card */}
+                  <div className="absolute bottom-5 left-5 right-5 rounded-xl border border-line bg-surface/95 backdrop-blur-xl shadow-pop p-4">
+                    <div className="flex items-center justify-between gap-3">
+                      <div>
+                        <p className="text-[10px] font-mono uppercase tracking-widest text-subtle">
+                          your-site.com
+                        </p>
+                        <p className="mt-1 text-2xl font-semibold tabular text-fg tracking-tight">
+                          78<span className="text-subtle text-sm">/100</span>{" "}
+                          <span className="text-success text-sm font-normal">
+                            B
+                          </span>
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <Sparkles className="w-3.5 h-3.5 text-primary" />
+                        <span className="text-[11px] font-medium text-fg">
+                          AI-friendly
+                        </span>
+                      </div>
+                    </div>
+                    <div className="mt-3 grid grid-cols-6 gap-1">
+                      {[1, 1, 0.6, 0.85, 1, 0.45].map((v, i) => (
+                        <div
+                          key={i}
+                          className="h-1.5 rounded-full bg-line overflow-hidden"
+                        >
+                          <div
+                            className="h-full bg-primary"
+                            style={{ width: `${v * 100}%` }}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </section>
 
-        <section
-          aria-labelledby="cta-heading"
-          className="px-6 py-24 border-t border-line"
-        >
-          <div className="max-w-3xl mx-auto text-center relative">
-            <div className="absolute inset-0 bg-aurora opacity-50 pointer-events-none" />
-            <div className="relative">
-              <h2
-                id="cta-heading"
-                className="text-3xl sm:text-5xl font-semibold tracking-tight"
-              >
-                Stop guessing.{" "}
-                <span className="text-primary">Get your score.</span>
-              </h2>
-              <p className="mt-4 text-muted">
-                The audit takes under a minute. Pricing later, score first.
-              </p>
-              <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-                <Button size="xl" asChild>
-                  <Link href="#top">Run free audit</Link>
-                </Button>
-                <Button size="xl" variant="outline" asChild>
-                  <Link href="/pricing">See pricing →</Link>
-                </Button>
-              </div>
+        {/* ─── BY THE NUMBERS ─────────────────────────────────────── */}
+        <section className="py-16 border-t border-line bg-surface/50 backdrop-blur-sm">
+          <div className="max-w-6xl mx-auto px-6">
+            <Eyebrow className="mb-6">By the numbers</Eyebrow>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-y-6">
+              {[
+                { v: "100", l: "Point rubric" },
+                { v: "6", l: "Audit categories" },
+                { v: "25+", l: "Individual checks" },
+                { v: "<15s", l: "Avg run time" },
+              ].map((s) => (
+                <div key={s.l}>
+                  <p className="text-4xl sm:text-5xl font-medium tabular text-fg tracking-[-0.03em]">
+                    {s.v}
+                  </p>
+                  <p className="mt-1 text-xs text-subtle uppercase tracking-wider">
+                    {s.l}
+                  </p>
+                </div>
+              ))}
             </div>
           </div>
         </section>
 
+        {/* ─── BENTO RUBRIC ─────────────────────────────────────── */}
         <section
-          aria-labelledby="faq-heading"
-          className="px-6 py-24 border-t border-line"
+          aria-labelledby="rubric-heading"
+          className="py-24 border-t border-line"
         >
-          <div className="max-w-3xl mx-auto">
-            <p className="text-xs uppercase tracking-widest text-subtle mb-3">
-              Frequently asked
-            </p>
+          <div className="max-w-6xl mx-auto px-6">
+            <Eyebrow>The rubric</Eyebrow>
             <h2
-              id="faq-heading"
-              className="text-3xl sm:text-4xl font-semibold tracking-tight mb-10"
+              id="rubric-heading"
+              className="mt-3 text-3xl sm:text-4xl font-medium tracking-[-0.03em] max-w-2xl"
             >
-              Questions, answered honestly.
+              Six categories. Every point traceable to a specific check.
             </h2>
-            <div className="space-y-3">
-              {FAQS.map((f) => (
-                <details
-                  key={f.q}
-                  className="group rounded-xl border border-line bg-surface overflow-hidden"
+            <p className="mt-3 text-muted max-w-xl">
+              No black-box scoring. Each finding shows the evidence, the impact,
+              and a concrete fix.
+            </p>
+
+            <div className="mt-12 grid grid-cols-1 sm:grid-cols-6 gap-4">
+              {/* llms.txt — large card */}
+              <BentoCard
+                area="sm:col-span-3 sm:row-span-2"
+                icon={<FileText className="w-4 h-4" />}
+                eyebrow="15 points"
+                title="llms.txt"
+                body="A Markdown index for LLMs at /llms.txt. We check presence, spec conformance, and llms-full.txt pairing. Most sites fail this single check."
+                tone="primary"
+              />
+              <BentoCard
+                area="sm:col-span-3"
+                icon={<Layers className="w-4 h-4" />}
+                eyebrow="25 points"
+                title="JSON-LD schema"
+                body="Organization/Person identity, page-type schema, FAQ + BreadcrumbList."
+              />
+              <BentoCard
+                area="sm:col-span-3"
+                icon={<Search className="w-4 h-4" />}
+                eyebrow="15 points"
+                title="Semantic HTML"
+                body="Single H1, no skipped heading levels, landmarks, alt-text coverage."
+              />
+              <BentoCard
+                area="sm:col-span-2"
+                icon={<Zap className="w-4 h-4" />}
+                eyebrow="15 points"
+                title="Meta + social"
+                body="Title length, description, canonical, og:image, twitter:card."
+              />
+              <BentoCard
+                area="sm:col-span-2"
+                icon={<ShieldCheck className="w-4 h-4" />}
+                eyebrow="15 points"
+                title="Crawlability"
+                body="robots.txt, sitemap, AI bot directives (GPTBot, ClaudeBot, PerplexityBot)."
+              />
+              <BentoCard
+                area="sm:col-span-2"
+                icon={<Sparkles className="w-4 h-4" />}
+                eyebrow="15 points"
+                title="E-E-A-T"
+                body="Author, freshness, About + Contact, authority links, sameAs."
+              />
+            </div>
+            <p className="mt-8 text-xs text-subtle font-mono">
+              Total: {Object.values(CATEGORY_MAX).reduce((a, b) => a + b, 0)}{" "}
+              points across {Object.keys(CATEGORY_LABELS).length} categories.
+            </p>
+          </div>
+        </section>
+
+        {/* ─── HOW IT WORKS ─────────────────────────────────────── */}
+        <section className="py-24 border-t border-line bg-bg2/50">
+          <div className="max-w-6xl mx-auto px-6">
+            <Eyebrow>How it works</Eyebrow>
+            <h2 className="mt-3 text-3xl sm:text-4xl font-medium tracking-[-0.03em] max-w-2xl">
+              Drop a URL. Get a number. Fix what fails.
+            </h2>
+            <div className="mt-12 grid sm:grid-cols-3 gap-6">
+              {[
+                {
+                  n: "01",
+                  t: "Scan",
+                  d: "We fetch the homepage, llms.txt, robots, and sitemap. Then we parse the DOM, JSON-LD, and bot directives.",
+                },
+                {
+                  n: "02",
+                  t: "Score",
+                  d: "25+ individual checks roll up into six category scores. The composite is a single 0–100 number with a letter grade.",
+                },
+                {
+                  n: "03",
+                  t: "Fix",
+                  d: "Every failing check ships with a concrete suggested fix. Share the report URL or hire the auditor to do the work.",
+                },
+              ].map((s) => (
+                <div key={s.n} className="relative">
+                  <span className="text-[10px] font-mono text-subtle tracking-wider">
+                    {s.n}
+                  </span>
+                  <h3 className="mt-2 text-xl font-medium tracking-tight text-fg">
+                    {s.t}
+                  </h3>
+                  <p className="mt-2 text-sm text-muted leading-relaxed">
+                    {s.d}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ─── RECENT PUBLIC AUDITS ─────────────────────────────── */}
+        {recent.length > 0 && (
+          <section className="py-20 border-t border-line">
+            <div className="max-w-6xl mx-auto px-6">
+              <div className="flex items-end justify-between mb-8">
+                <div>
+                  <Eyebrow>Recent audits</Eyebrow>
+                  <h2 className="mt-2 text-2xl font-medium tracking-[-0.02em]">
+                    Real sites, scanned in the last few days.
+                  </h2>
+                </div>
+                <Link
+                  href="/leaderboard"
+                  className="text-sm text-primary hover:text-primary-hover font-medium inline-flex items-center gap-1 group"
                 >
-                  <summary className="px-5 py-4 cursor-pointer list-none flex items-center justify-between gap-4 hover:bg-surface2">
-                    <span className="font-medium text-fg">{f.q}</span>
-                    <span className="text-subtle group-open:rotate-45 transition-transform text-lg leading-none">
+                  Full leaderboard
+                  <ArrowUpRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                </Link>
+              </div>
+              <ul className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                {recent.map((r) => (
+                  <li key={r.id}>
+                    <Link
+                      href={`/r/${r.id}`}
+                      className="block rounded-xl border border-line bg-surface hover:border-line-strong hover:shadow-card transition-all px-4 py-3 group"
+                    >
+                      <div className="flex items-center justify-between gap-3">
+                        <span className="font-mono text-sm text-fg truncate">
+                          {hostOf(r.url)}
+                        </span>
+                        <span
+                          className={`text-sm font-medium tabular ${
+                            r.score >= 75
+                              ? "text-success"
+                              : r.score >= 50
+                                ? "text-warn"
+                                : "text-danger"
+                          }`}
+                        >
+                          {r.score}
+                        </span>
+                      </div>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </section>
+        )}
+
+        {/* ─── HIRE / SERVICES TEASER ──────────────────────────── */}
+        <section className="py-24 border-t border-line">
+          <div className="max-w-6xl mx-auto px-6">
+            <Eyebrow>Hire the auditor</Eyebrow>
+            <h2 className="mt-3 text-3xl sm:text-4xl font-medium tracking-[-0.03em] max-w-2xl">
+              Built by a senior Next.js + Cloudflare developer who fixes what
+              the audit finds.
+            </h2>
+            <div className="mt-10 grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              {Object.values(GIGS).slice(0, 6).map((g) => (
+                <a
+                  key={g.key}
+                  href={g.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block rounded-xl border border-line bg-surface hover:border-primary/40 hover:shadow-card px-4 py-4 transition-all group"
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <h3 className="text-sm font-semibold tracking-tight text-fg group-hover:text-primary transition-colors">
+                      {g.title}
+                    </h3>
+                    <ArrowUpRight className="w-3.5 h-3.5 text-subtle group-hover:text-primary shrink-0 transition-colors" />
+                  </div>
+                  <p className="mt-2 text-xs text-muted leading-relaxed">
+                    {g.blurb}
+                  </p>
+                  <p className="mt-3 text-xs font-mono tabular text-primary">
+                    from {g.startingPrice}
+                  </p>
+                </a>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ─── FAQ ──────────────────────────────────────────────── */}
+        <section className="py-24 border-t border-line bg-bg2/50">
+          <div className="max-w-3xl mx-auto px-6">
+            <Eyebrow>FAQ</Eyebrow>
+            <h2 className="mt-3 text-3xl sm:text-4xl font-medium tracking-[-0.03em]">
+              The honest answers.
+            </h2>
+            <div className="mt-10 divide-y divide-line border-y border-line">
+              {FAQ.map((f) => (
+                <details key={f.q} className="group py-5">
+                  <summary className="list-none cursor-pointer flex items-start justify-between gap-4">
+                    <h3 className="text-base font-medium tracking-tight text-fg">
+                      {f.q}
+                    </h3>
+                    <span className="shrink-0 w-6 h-6 rounded-full border border-line flex items-center justify-center text-subtle group-open:rotate-45 transition-transform">
                       +
                     </span>
                   </summary>
-                  <div className="px-5 pb-5 text-sm text-muted leading-relaxed">
+                  <p className="mt-3 text-sm text-muted leading-relaxed pr-10">
                     {f.a}
-                  </div>
+                  </p>
                 </details>
               ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ─── FINAL CTA ────────────────────────────────────────── */}
+        <section className="py-24 border-t border-line">
+          <div className="max-w-4xl mx-auto px-6 text-center">
+            <h2 className="text-3xl sm:text-5xl font-medium tracking-[-0.03em]">
+              See where you stand.
+            </h2>
+            <p className="mt-4 text-muted max-w-xl mx-auto">
+              Sixty seconds. One score. Six categories of concrete fixes. Free,
+              forever, for one site.
+            </p>
+            <div className="mt-10 max-w-xl mx-auto">
+              <HeroUrlInput />
             </div>
           </div>
         </section>
@@ -335,3 +426,42 @@ export default async function Home() {
     </>
   );
 }
+
+function BentoCard({
+  area,
+  icon,
+  eyebrow,
+  title,
+  body,
+  tone,
+}: {
+  area: string;
+  icon: React.ReactNode;
+  eyebrow: string;
+  title: string;
+  body: string;
+  tone?: "primary";
+}) {
+  return (
+    <article
+      className={`${area} rounded-2xl border border-line bg-surface shadow-card p-6 hover:border-line-strong hover:shadow-pop transition-all ${
+        tone === "primary"
+          ? "bg-gradient-to-br from-primary-soft/40 via-surface to-surface"
+          : ""
+      }`}
+    >
+      <div className="flex items-center gap-2 mb-4">
+        <span className="w-7 h-7 rounded-lg bg-primary-soft text-primary flex items-center justify-center">
+          {icon}
+        </span>
+        <span className="text-[10px] font-mono uppercase tracking-widest text-subtle">
+          {eyebrow}
+        </span>
+      </div>
+      <h3 className="text-lg font-medium tracking-tight text-fg">{title}</h3>
+      <p className="mt-2 text-sm text-muted leading-relaxed">{body}</p>
+    </article>
+  );
+}
+
+void SITE;

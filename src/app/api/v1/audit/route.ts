@@ -40,7 +40,13 @@ export async function POST(req: NextRequest) {
   let url: string;
   try {
     const body = await req.json();
-    url = String(body.url || "");
+    if (typeof body?.url !== "string") {
+      return Response.json(
+        { error: "Body must be JSON: { url: string }" },
+        { status: 400 },
+      );
+    }
+    url = body.url.trim();
   } catch {
     return Response.json({ error: "Body must be JSON: { url }" }, { status: 400 });
   }

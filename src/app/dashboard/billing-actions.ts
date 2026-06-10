@@ -15,15 +15,21 @@ export async function startUpgrade(formData: FormData) {
   if (!user) redirect(`/sign-up?next=/pricing`);
 
   if (billingEnabled) {
+    // SECURITY: Do NOT fall through to setPlan when Stripe is configured but
+    // the checkout call returns null — that would silently grant Pro for free.
     const url = await createCheckoutSession({
       userId: user.id,
       email: user.email,
       plan,
       customerId: user.stripeCustomerId,
     });
-    if (url) redirect(url);
+    if (!url) {
+      redirect("/pricing?error=checkout_unavailable");
+    }
+    redirect(url!);
   }
-  // Dev fallback: flip plan locally, no charge
+
+  // Dev-stub: only when billing is NOT configured (local development).
   await setPlan(user.id, plan);
   redirect("/dashboard?welcome=pro");
 }
