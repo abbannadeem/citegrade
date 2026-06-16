@@ -1,7 +1,7 @@
 import type { CategoryScore } from "@/lib/audit/types";
 import { GIGS, PRIMARY_GIG_FOR_CATEGORY } from "@/lib/gigs";
 import { HireForm } from "./hire-form";
-import { Sparkles, TrendingUp, ArrowUpRight } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 
 interface Props {
   categories: CategoryScore[];
@@ -28,60 +28,45 @@ export function HireCTA({ categories, reportId, siteHost, currentScore }: Props)
   // High score → soft suggestion, no form
   if (gigs.length === 0) {
     return (
-      <section className="relative rounded-2xl overflow-hidden border border-success/30 bg-gradient-to-br from-success-soft via-surface to-surface px-8 py-7">
-        <div className="absolute -top-12 -right-12 w-40 h-40 rounded-full bg-success/10 blur-3xl" />
-        <div className="relative">
-          <div className="flex items-center gap-2 mb-2">
-            <Sparkles className="w-4 h-4 text-success" />
-            <p className="text-[10px] uppercase tracking-widest text-success font-semibold">
-              You&apos;re in great shape
-            </p>
-          </div>
-          <h3 className="text-fg text-xl font-semibold leading-snug">
-            Your site is AI-ready. Want to push it further?
-          </h3>
-          <p className="text-sm text-muted mt-2 leading-relaxed max-w-prose">
-            Ship a sister site at this quality, or get help with monitoring,
-            structured content for AI citation, and ongoing optimization.
-          </p>
-          <a
-            href={GIGS["ai-seo"].url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-5 inline-flex items-center gap-1.5 text-primary hover:text-primary-hover font-medium text-sm group"
-          >
-            See all services
-            <ArrowUpRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-          </a>
-        </div>
+      <section className="border border-line rounded-2xl px-7 py-7 bg-surface">
+        <p className="eyebrow text-signal-deep">You&apos;re in great shape</p>
+        <h3 className="mt-3 text-fg text-xl font-semibold tracking-tight">
+          Your site is AI-ready. Want to push it further?
+        </h3>
+        <p className="text-sm text-muted mt-2 leading-relaxed max-w-prose">
+          Ship a sister site at this quality, or get help with monitoring,
+          structured content for AI citation, and ongoing optimization.
+        </p>
+        <a
+          href={GIGS["ai-seo"].url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-5 inline-flex items-center gap-1.5 text-fg underline decoration-line-strong underline-offset-4 hover:decoration-fg font-mono text-sm group"
+        >
+          See all services
+          <ArrowUpRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+        </a>
       </section>
     );
   }
 
   return (
     <section className="space-y-5">
-      {/* Estimated uplift hero */}
-      <div className="relative rounded-2xl overflow-hidden border border-primary/30 bg-gradient-to-br from-primary-soft via-surface to-surface px-6 sm:px-8 py-6">
-        <div className="absolute -top-16 -right-16 w-48 h-48 rounded-full bg-primary/20 blur-3xl" />
-        <div className="relative grid sm:grid-cols-2 gap-4 items-center">
+      {/* Estimated uplift */}
+      <div className="border border-line rounded-2xl px-6 sm:px-8 py-7 bg-surface">
+        <div className="grid sm:grid-cols-2 gap-6 items-center">
           <div>
-            <div className="flex items-center gap-2 mb-2">
-              <TrendingUp className="w-4 h-4 text-primary" />
-              <p className="text-[10px] uppercase tracking-widest text-primary font-semibold">
-                Hire me to fix this
-              </p>
-            </div>
-            <h3 className="text-fg text-xl sm:text-2xl font-semibold leading-snug tracking-tight">
-              From{" "}
+            <p className="eyebrow">Hire the auditor</p>
+            <h3 className="mt-3 text-fg text-2xl font-semibold leading-snug tracking-display">
               <span className="font-mono text-danger tabular">{currentScore}</span>
-              {" → "}
-              <span className="font-mono text-success tabular">~{potential}</span>
+              <span className="text-subtle mx-2 font-mono">→</span>
+              <span className="font-mono text-signal-deep tabular">~{potential}</span>
             </h3>
-            <p className="text-sm text-muted mt-2 leading-relaxed">
+            <p className="text-sm text-muted mt-3 leading-relaxed">
               Fixing the {failing.length} failing categor
               {failing.length === 1 ? "y" : "ies"} can lift your score by about{" "}
-              <strong className="text-fg">+{uplift} points</strong>. I can do it
-              in days, not weeks.
+              <strong className="text-fg font-mono">+{uplift}</strong> points. In
+              days, not weeks.
             </p>
           </div>
           <div>
@@ -96,33 +81,29 @@ export function HireCTA({ categories, reportId, siteHost, currentScore }: Props)
       </div>
 
       {/* Service cards */}
-      <div className="rounded-2xl border border-line bg-surface px-6 py-5 shadow-card">
-        <p className="text-[10px] uppercase tracking-widest text-subtle mb-3">
-          Services that fit what failed
-        </p>
-        <ul className="grid sm:grid-cols-2 gap-3">
+      <div className="border border-line rounded-2xl px-6 py-5 bg-surface">
+        <p className="rule-label mb-4">Services that fit what failed</p>
+        <ul className="grid sm:grid-cols-2 gap-px bg-line border border-line rounded-lg overflow-hidden">
           {gigs.map((g) => (
-            <li key={g.key}>
+            <li key={g.key} className="bg-surface">
               <a
                 href={g.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="block rounded-xl border border-line hover:border-primary/40 px-4 py-3.5 transition-all hover:shadow-card group bg-surface"
+                className="group block px-4 py-3.5 hover:bg-surface2 transition-colors h-full"
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
-                    <p className="text-fg font-medium leading-snug group-hover:text-primary transition-colors">
-                      {g.title}
-                    </p>
+                    <p className="text-fg font-medium leading-snug">{g.title}</p>
                     <p className="text-xs text-muted mt-1 leading-relaxed">
                       {g.blurb}
                     </p>
                   </div>
                   <div className="text-right shrink-0">
-                    <p className="text-primary font-mono text-sm font-semibold tabular">
+                    <p className="text-subtle font-mono text-xs tabular">
                       from {g.startingPrice}
                     </p>
-                    <ArrowUpRight className="w-4 h-4 text-subtle group-hover:text-primary ml-auto mt-1 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
+                    <ArrowUpRight className="w-4 h-4 text-subtle group-hover:text-fg ml-auto mt-1 transition-colors" />
                   </div>
                 </div>
               </a>

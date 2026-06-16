@@ -8,15 +8,19 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
+        // Solid ink — the editorial default action
         primary:
-          "bg-gradient-to-b from-[#5b53e8] to-[#4f46e5] text-primary-fg hover:from-[#6d65f0] hover:to-[#5b53e8] shadow-[inset_0_1px_0_rgba(255,255,255,0.18),0_1px_2px_rgba(79,70,229,0.4),0_8px_24px_-4px_rgba(79,70,229,0.4)] hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.18),0_1px_2px_rgba(79,70,229,0.4),0_12px_28px_-4px_rgba(79,70,229,0.5)] dark:from-indigo-500 dark:to-indigo-600",
+          "bg-fg text-primary-fg hover:bg-primary-hover shadow-xs",
+        // The one accent — signal-lime fill with ink text, reserved for hero/key CTAs
+        signal:
+          "bg-signal text-signal-fg hover:brightness-[0.96] shadow-xs font-semibold",
         secondary:
-          "bg-surface2 text-fg border border-line hover:border-line-strong hover:bg-surface shadow-xs",
+          "bg-surface text-fg border border-line-strong hover:bg-surface2 shadow-xs",
         ghost: "text-muted hover:text-fg hover:bg-surface2",
         outline:
-          "border border-line text-fg hover:border-line-strong hover:bg-surface2 shadow-xs",
+          "border border-line-strong text-fg hover:bg-surface2 shadow-xs",
         danger: "bg-danger text-white hover:opacity-90 shadow-sm",
-        link: "text-primary hover:underline underline-offset-4",
+        link: "text-fg underline decoration-line-strong underline-offset-4 hover:decoration-fg",
       },
       size: {
         sm: "h-8 px-3 text-xs",

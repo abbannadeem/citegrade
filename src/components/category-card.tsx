@@ -4,35 +4,46 @@ import { FindingRow } from "./finding-row";
 
 function tone(earned: number, max: number) {
   const r = max === 0 ? 1 : earned / max;
-  if (r >= 0.9)
-    return "text-emerald-700 dark:text-success border-emerald-500/30 bg-success-soft";
-  if (r >= 0.6)
-    return "text-lime-700 dark:text-lime-300 border-lime-500/30 bg-lime-500/5";
-  if (r >= 0.4)
-    return "text-amber-700 dark:text-amber-300 border-amber-500/30 bg-amber-500/5";
-  return "text-rose-700 dark:text-rose-300 border-rose-500/30 bg-rose-500/5";
+  if (r >= 0.75) return "text-signal-deep";
+  if (r >= 0.5) return "text-warn";
+  return "text-danger";
 }
 
 export function CategoryCard({ data }: { data: CategoryScore }) {
   const label = CATEGORY_LABELS[data.category];
-  const t = tone(data.earned, data.max);
+  const ratio = data.max ? data.earned / data.max : 0;
   return (
     <section
       aria-labelledby={`cat-${data.category}`}
-      className="rounded-xl border border-line bg-surface overflow-hidden shadow-card"
+      className="border border-line rounded-xl overflow-hidden bg-surface"
     >
-      <header className="flex items-center justify-between px-5 py-4 border-b border-line">
-        <h3
-          id={`cat-${data.category}`}
-          className="text-sm uppercase tracking-widest text-muted font-semibold"
-        >
-          {label}
-        </h3>
-        <span
-          className={`tabular text-sm font-mono border px-2 py-0.5 rounded-md ${t}`}
-        >
-          {data.earned} / {data.max}
-        </span>
+      <header className="px-5 py-4 border-b border-line">
+        <div className="flex items-center justify-between gap-3">
+          <h3
+            id={`cat-${data.category}`}
+            className="font-mono text-sm text-fg"
+          >
+            {label}
+          </h3>
+          <span className={`font-mono text-sm tabular ${tone(data.earned, data.max)}`}>
+            {data.earned}
+            <span className="text-subtle">/{data.max}</span>
+          </span>
+        </div>
+        <div className="mt-3 h-[3px] rounded-full bg-line overflow-hidden">
+          <div
+            className="h-full rounded-full"
+            style={{
+              width: `${ratio * 100}%`,
+              background:
+                ratio >= 0.75
+                  ? "var(--signal-deep)"
+                  : ratio >= 0.5
+                    ? "var(--warn)"
+                    : "var(--danger)",
+            }}
+          />
+        </div>
       </header>
       <ul className="divide-y divide-line">
         {data.findings.map((f) => (

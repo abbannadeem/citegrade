@@ -3,11 +3,8 @@ import { listRecentReports } from "@/lib/storage";
 import { MarketingHeader } from "@/components/marketing-header";
 import { MarketingFooter } from "@/components/marketing-footer";
 import { getCurrentUser } from "@/lib/auth";
-import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { ScorePill } from "@/components/score-pill";
 import { hostOf } from "@/lib/utils";
-import { Trophy } from "lucide-react";
 import { JsonLd } from "@/components/json-ld";
 import { siteUrl } from "@/lib/site";
 
@@ -67,87 +64,67 @@ export default async function LeaderboardPage() {
       <JsonLd data={itemListSchema} />
       <MarketingHeader isAuthed={!!user} />
       <main className="flex-1">
-        <section className="relative overflow-hidden px-6 py-20 sm:py-28">
-          <div className="absolute inset-0 bg-aurora pointer-events-none" />
-          <div className="relative max-w-3xl mx-auto text-center">
-            <Badge variant="primary" className="mb-6">
-              <Trophy className="w-3 h-3" /> The Citegrade Index
-            </Badge>
-            <h1 className="text-4xl sm:text-6xl font-bold tracking-tight">
-              Who&apos;s winning at{" "}
-              <span className="text-primary">AI search?</span>
+        <section className="border-b border-line">
+          <div className="max-w-4xl mx-auto px-6 pt-16 pb-12 lg:pt-20">
+            <p className="eyebrow mb-5">The Citegrade Index</p>
+            <h1 className="text-4xl sm:text-5xl font-semibold tracking-display text-fg max-w-2xl">
+              Who&apos;s winning at AI search?
             </h1>
-            <p className="mt-5 text-lg text-muted max-w-xl mx-auto">
-              A continuously-updated ranking of the highest-scoring sites on
-              the Citegrade 100-point rubric. Anyone can audit — only the best
-              make the board.
+            <p className="mt-5 text-muted max-w-xl leading-relaxed">
+              A continuously-updated ranking of the highest-scoring sites on the
+              Citegrade 100-point rubric. Anyone can audit — only the best make
+              the board.
             </p>
           </div>
         </section>
 
-        <section className="px-6 pb-24">
+        <section className="px-6 py-14 lg:py-16">
           <div className="max-w-4xl mx-auto">
             {ranked.length === 0 ? (
-              <Card className="p-8 text-center">
-                <p className="text-fg">
-                  No audits yet. Be the first on the board.
-                </p>
+              <div className="border border-line rounded-xl p-10 text-center">
+                <p className="text-fg">No audits yet. Be the first on the board.</p>
                 <Link
                   href="/"
-                  className="inline-block mt-4 text-sm text-primary hover:text-primary"
+                  className="inline-block mt-4 text-sm font-mono text-fg underline decoration-line-strong underline-offset-4 hover:decoration-fg"
                 >
                   Run an audit →
                 </Link>
-              </Card>
+              </div>
             ) : (
-              <Card className="overflow-hidden">
-                <table className="w-full text-sm">
-                  <thead className="bg-surface border-b border-line text-[10px] uppercase tracking-widest text-subtle">
-                    <tr>
-                      <th className="text-left font-medium px-5 py-3 w-16">#</th>
-                      <th className="text-left font-medium px-5 py-3">Site</th>
-                      <th className="text-right font-medium px-5 py-3">Score</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-line">
-                    {ranked.map((r) => (
-                      <tr
-                        key={r.host}
-                        className="hover:bg-surface2 transition-colors group"
-                      >
-                        <td className="px-5 py-3.5">
-                          <span
-                            className={
-                              r.rank <= 3
-                                ? "text-primary font-mono tabular font-bold text-base"
-                                : "text-subtle font-mono tabular text-sm"
-                            }
-                          >
-                            {String(r.rank).padStart(2, "0")}
-                          </span>
-                        </td>
-                        <td className="px-5 py-3.5">
-                          <Link
-                            href={`/r/${r.reportId}`}
-                            className="font-mono text-fg group-hover:text-primary transition-colors"
-                          >
-                            {r.host}
-                          </Link>
-                        </td>
-                        <td className="px-5 py-3.5 text-right">
-                          <ScorePill score={r.score} grade={r.grade} />
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </Card>
+              <div className="border-t border-line">
+                <div className="grid grid-cols-[3.5rem_1fr_auto] items-center gap-4 px-1 pb-3 rule-label">
+                  <span>Rank</span>
+                  <span>Site</span>
+                  <span>Score</span>
+                </div>
+                {ranked.map((r) => (
+                  <Link
+                    key={r.host}
+                    href={`/r/${r.reportId}`}
+                    className="group grid grid-cols-[3.5rem_1fr_auto] items-center gap-4 border-t border-line py-4 px-1 hover:bg-surface transition-colors"
+                  >
+                    <span
+                      className={
+                        r.rank <= 3
+                          ? "font-mono tabular text-fg text-base"
+                          : "font-mono tabular text-subtle text-sm"
+                      }
+                    >
+                      {String(r.rank).padStart(2, "0")}
+                    </span>
+                    <span className="font-mono text-sm text-fg truncate group-hover:underline decoration-line-strong underline-offset-4">
+                      {r.host}
+                    </span>
+                    <ScorePill score={r.score} grade={r.grade} />
+                  </Link>
+                ))}
+              </div>
             )}
-            <p className="text-center text-xs text-subtle mt-6">
+            <p className="mt-8 text-sm text-muted">
               Want to climb the board?{" "}
               <Link
                 href="/"
-                className="text-primary hover:text-primary"
+                className="text-fg underline decoration-line-strong underline-offset-4 hover:decoration-fg"
               >
                 Run an audit
               </Link>

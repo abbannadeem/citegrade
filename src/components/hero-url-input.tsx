@@ -14,7 +14,7 @@ function Submit() {
     <button
       type="submit"
       disabled={pending}
-      className="absolute right-2 top-1/2 -translate-y-1/2 h-12 px-5 rounded-lg bg-primary hover:bg-primary-hover text-primary-fg font-medium text-sm tracking-tight shadow-md transition-all disabled:opacity-60 disabled:cursor-not-allowed flex items-center gap-2 active:scale-[0.97]"
+      className="absolute right-2 top-1/2 -translate-y-1/2 h-12 px-5 rounded-lg bg-signal hover:brightness-[0.96] text-signal-fg font-semibold text-sm tracking-tight transition-all disabled:opacity-60 disabled:cursor-not-allowed flex items-center gap-2 active:scale-[0.98]"
     >
       {pending ? (
         <>
@@ -22,7 +22,7 @@ function Submit() {
         </>
       ) : (
         <>
-          Audit <ArrowRight className="w-4 h-4" />
+          Run audit <ArrowRight className="w-4 h-4" />
         </>
       )}
     </button>
@@ -46,7 +46,7 @@ export function HeroUrlInput() {
           autoComplete="url"
           placeholder="https://your-site.com"
           aria-label="Website URL to audit"
-          className="w-full h-16 rounded-xl border border-line bg-surface pl-5 pr-32 font-mono text-base text-fg placeholder:text-subtle focus:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/15 shadow-card transition-all"
+          className="w-full h-16 rounded-xl border border-line-strong bg-surface pl-5 pr-36 font-mono text-base text-fg placeholder:text-subtle focus:border-fg focus:outline-none shadow-card transition-colors"
         />
         <Submit />
       </form>

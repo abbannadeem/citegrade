@@ -10,10 +10,8 @@ import { JsonLd } from "@/components/json-ld";
 import { siteUrl, SITE } from "@/lib/site";
 import { MarketingHeader } from "@/components/marketing-header";
 import { MarketingFooter } from "@/components/marketing-footer";
-import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Sparkles, Play, Bookmark, ArrowUpRight, FileDown } from "lucide-react";
+import { Play, ArrowUpRight, FileDown } from "lucide-react";
 import { getCurrentUser } from "@/lib/auth";
 import { limitsFor } from "@/lib/plans";
 import { CATEGORY_MAX, type CheckCategory, CATEGORY_LABELS } from "@/lib/audit/types";
@@ -61,6 +59,12 @@ function reportJsonLd(report: Awaited<ReturnType<typeof loadReport>>) {
   } as const;
 }
 
+function miniTone(pct: number): string {
+  if (pct >= 0.75) return "#c6f24e";
+  if (pct >= 0.5) return "#e0b341";
+  return "#e0675a";
+}
+
 export default async function ReportPage({ params }: Params) {
   const { slug } = await params;
   const report = await loadReport(slug);
@@ -75,22 +79,20 @@ export default async function ReportPage({ params }: Params) {
 
       <main className="flex-1 px-6 py-10 sm:py-14">
         <div className="max-w-4xl mx-auto">
-          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-10">
-            <div>
-              <Badge variant="primary" className="mb-3">
-                <Sparkles className="w-3 h-3" /> AI SEO report
-              </Badge>
-              <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">
+          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-8">
+            <div className="min-w-0">
+              <p className="eyebrow mb-3">AI-SEO report</p>
+              <h1 className="text-3xl sm:text-4xl font-semibold tracking-display">
                 <a
                   href={report.finalUrl || report.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="font-mono text-primary hover:underline underline-offset-4 break-all"
+                  className="font-mono text-fg underline decoration-line-strong underline-offset-[6px] hover:decoration-fg break-all"
                 >
                   {host}
                 </a>
               </h1>
-              <p className="mt-2 text-sm text-subtle font-mono">
+              <p className="mt-3 text-xs text-subtle font-mono">
                 Scanned{" "}
                 <time dateTime={report.fetchedAt}>
                   {relativeTime(report.fetchedAt)}
@@ -98,7 +100,7 @@ export default async function ReportPage({ params }: Params) {
                 · {report.durationMs}ms · HTTP {report.metadata.statusCode}
               </p>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 shrink-0">
               <ShareLink url={siteUrl(`/r/${report.id}`)} />
               {user && limitsFor(user.plan).pdfExport && (
                 <Button asChild variant="secondary" size="sm">
@@ -120,55 +122,48 @@ export default async function ReportPage({ params }: Params) {
           </div>
 
           {!user && (
-            <Card className="mb-8 p-5 border-primary/30 bg-primary-soft">
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                <div className="flex items-start gap-3">
-                  <Bookmark className="w-5 h-5 text-primary mt-0.5 shrink-0" />
-                  <div>
-                    <p className="text-sm text-fg font-medium">
-                      Save this report and track changes over time
-                    </p>
-                    <p className="text-xs text-muted mt-1">
-                      Free account · weekly re-scans on Pro · 1-click claim.
-                    </p>
-                  </div>
-                </div>
-                <Button asChild size="sm" className="shrink-0">
-                  <Link
-                    href={`/sign-up?claim=${report.id}&next=${encodeURIComponent(`/r/${report.id}`)}`}
-                  >
-                    Claim report <ArrowUpRight className="w-3.5 h-3.5" />
-                  </Link>
-                </Button>
+            <div className="mb-8 border border-line rounded-xl p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <div>
+                <p className="text-sm text-fg font-medium">
+                  Save this report and track changes over time
+                </p>
+                <p className="text-xs text-muted mt-1">
+                  Free account · weekly re-scans on Pro · 1-click claim.
+                </p>
               </div>
-            </Card>
+              <Button asChild size="sm" variant="signal" className="shrink-0">
+                <Link
+                  href={`/sign-up?claim=${report.id}&next=${encodeURIComponent(`/r/${report.id}`)}`}
+                >
+                  Claim report <ArrowUpRight className="w-3.5 h-3.5" />
+                </Link>
+              </Button>
+            </div>
           )}
 
-          <Card className="p-6 sm:p-10 mb-12 relative overflow-hidden">
-            <div className="absolute inset-0 bg-aurora opacity-30 pointer-events-none" />
+          {/* Score module — the dark instrument surface */}
+          <div className="instrument relative overflow-hidden rounded-2xl border border-instrument-line bg-instrument text-instrument-fg p-6 sm:p-10 mb-12">
+            <div className="absolute inset-0 bg-grid opacity-50 pointer-events-none" />
             <div className="relative">
               <ScoreGauge
                 score={report.score}
                 grade={report.grade}
                 verdict={report.verdict}
               />
-              <dl className="mt-8 pt-6 border-t border-line grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 text-sm">
+              <dl className="mt-8 pt-6 border-t border-instrument-line grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
                 {report.categories.map((c) => {
-                  const pct = c.earned / c.max;
-                  const tone =
-                    pct >= 0.9
-                      ? "text-success"
-                      : pct >= 0.6
-                        ? "text-warn"
-                        : "text-danger";
+                  const pct = c.max ? c.earned / c.max : 0;
                   return (
                     <div key={c.category}>
-                      <dt className="text-subtle text-[10px] uppercase tracking-widest">
+                      <dt className="font-mono text-[10px] uppercase tracking-[0.12em] text-instrument-muted truncate">
                         {CATEGORY_LABELS[c.category as CheckCategory]}
                       </dt>
-                      <dd className={`mt-1 font-mono tabular text-lg ${tone}`}>
+                      <dd
+                        className="mt-1.5 font-mono tabular text-lg"
+                        style={{ color: miniTone(pct) }}
+                      >
                         {c.earned}
-                        <span className="text-subtle text-sm">
+                        <span className="text-instrument-muted text-sm">
                           /{CATEGORY_MAX[c.category as CheckCategory]}
                         </span>
                       </dd>
@@ -177,12 +172,10 @@ export default async function ReportPage({ params }: Params) {
                 })}
               </dl>
             </div>
-          </Card>
+          </div>
 
-          <section className="space-y-6">
-            <h2 className="text-xs uppercase tracking-widest text-subtle">
-              Detailed findings
-            </h2>
+          <section className="space-y-4">
+            <h2 className="rule-label">Detailed findings</h2>
             {report.categories.map((c) => (
               <CategoryCard key={c.category} data={c} />
             ))}
@@ -197,9 +190,9 @@ export default async function ReportPage({ params }: Params) {
             />
           </section>
 
-          <p className="mt-12 text-xs text-subtle text-center">
+          <p className="mt-12 text-xs text-subtle text-center font-mono">
             Scored using Citegrade&apos;s public{" "}
-            <Link href="/docs" className="underline underline-offset-2">
+            <Link href="/docs" className="underline decoration-line-strong underline-offset-2 hover:decoration-fg">
               100-point rubric
             </Link>
             .

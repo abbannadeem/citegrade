@@ -1,5 +1,8 @@
 import { cn } from "@/lib/utils";
 
+/**
+ * Editorial mono score readout — ink/olive/amber/red by tier, no candy fills.
+ */
 export function ScorePill({
   score,
   grade,
@@ -9,32 +12,19 @@ export function ScorePill({
   grade?: string;
   size?: "sm" | "md" | "lg";
 }) {
-  const color =
-    score >= 90
-      ? "bg-emerald-500/10 text-emerald-700 dark:text-success border-emerald-500/30"
-      : score >= 75
-        ? "bg-lime-500/10 text-lime-700 dark:text-lime-300 border-lime-500/30"
-        : score >= 60
-          ? "bg-amber-500/10 text-amber-700 dark:text-amber-300 border-amber-500/30"
-          : score >= 40
-            ? "bg-orange-500/10 text-orange-700 dark:text-orange-300 border-orange-500/30"
-            : "bg-rose-500/10 text-rose-700 dark:text-rose-300 border-rose-500/30";
-  const sz =
-    size === "sm"
-      ? "px-2 py-0.5 text-xs"
-      : size === "lg"
-        ? "px-3 py-1 text-sm"
-        : "px-2.5 py-0.5 text-xs";
+  const tone =
+    score >= 75
+      ? "text-signal-deep dark:text-signal"
+      : score >= 60
+        ? "text-warn"
+        : "text-danger";
+  const sz = size === "sm" ? "text-xs" : size === "lg" ? "text-base" : "text-sm";
   return (
     <span
-      className={cn(
-        "inline-flex items-center gap-1 rounded-md border tabular font-mono",
-        color,
-        sz,
-      )}
+      className={cn("inline-flex items-baseline gap-1.5 font-mono tabular", sz)}
     >
-      {score}
-      {grade && <span className="opacity-60">·{grade}</span>}
+      <span className={tone}>{score}</span>
+      {grade && <span className="text-subtle text-[0.85em]">{grade}</span>}
     </span>
   );
 }

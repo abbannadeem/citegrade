@@ -7,14 +7,5 @@ export function Eyebrow({
   children: React.ReactNode;
   className?: string;
 }) {
-  return (
-    <p
-      className={cn(
-        "inline-block text-[11px] font-semibold uppercase tracking-[0.18em] text-subtle",
-        className,
-      )}
-    >
-      {children}
-    </p>
-  );
+  return <p className={cn("eyebrow", className)}>{children}</p>;
 }

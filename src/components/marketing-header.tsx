@@ -1,10 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { Sparkles, Menu, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { ThemeToggle } from "@/components/theme-toggle";
+import { BrandMark } from "@/components/brand-mark";
 
 interface Props {
   isAuthed: boolean;
@@ -20,17 +20,15 @@ const NAV = [
 export function MarketingHeader({ isAuthed }: Props) {
   const [open, setOpen] = useState(false);
   return (
-    <header className="sticky top-0 z-40 border-b border-line bg-bg/80 backdrop-blur-xl">
-      <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2 group">
-          <div className="w-7 h-7 rounded-md bg-primary flex items-center justify-center shadow-sm">
-            <Sparkles className="w-3.5 h-3.5 text-primary-fg" />
-          </div>
-          <span className="text-base font-semibold tracking-tight text-fg">
+    <header className="sticky top-0 z-40 border-b border-line bg-bg/85 backdrop-blur-xl">
+      <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+        <Link href="/" className="flex items-center gap-2.5 group">
+          <BrandMark size={24} />
+          <span className="text-[15px] font-semibold tracking-tight text-fg">
             Citegrade
           </span>
         </Link>
-        <nav className="hidden md:flex items-center gap-6 text-sm">
+        <nav className="hidden md:flex items-center gap-7 text-[13px]">
           {NAV.map((n) => (
             <Link
               key={n.href}
@@ -42,7 +40,6 @@ export function MarketingHeader({ isAuthed }: Props) {
           ))}
         </nav>
         <div className="hidden md:flex items-center gap-2">
-          <ThemeToggle />
           {isAuthed ? (
             <Button asChild size="sm">
               <Link href="/dashboard">Dashboard</Link>
@@ -58,16 +55,14 @@ export function MarketingHeader({ isAuthed }: Props) {
             </>
           )}
         </div>
-        <div className="md:hidden flex items-center gap-1">
-          <ThemeToggle />
-          <button
-            onClick={() => setOpen((o) => !o)}
-            className="p-2 text-muted hover:text-fg"
-            aria-label="Toggle menu"
-          >
-            {open ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-          </button>
-        </div>
+        <button
+          onClick={() => setOpen((o) => !o)}
+          className="md:hidden p-2 -mr-2 text-muted hover:text-fg"
+          aria-label="Toggle menu"
+          aria-expanded={open}
+        >
+          {open ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+        </button>
       </div>
       {open && (
         <div className="md:hidden border-t border-line px-6 py-4 space-y-3 bg-bg">
@@ -75,7 +70,7 @@ export function MarketingHeader({ isAuthed }: Props) {
             <Link
               key={n.href}
               href={n.href}
-              className="block text-muted hover:text-fg"
+              className="block text-[13px] text-muted hover:text-fg"
               onClick={() => setOpen(false)}
             >
               {n.label}

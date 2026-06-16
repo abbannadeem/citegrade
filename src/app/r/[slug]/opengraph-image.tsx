@@ -7,11 +7,10 @@ export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
 function color(score: number) {
-  if (score >= 90) return "#10b981";
-  if (score >= 75) return "#84cc16";
-  if (score >= 60) return "#f59e0b";
-  if (score >= 40) return "#f97316";
-  return "#f43f5e";
+  if (score >= 75) return "#c6f24e"; // signal-lime
+  if (score >= 60) return "#e0b341"; // amber
+  if (score >= 40) return "#e08a4e"; // orange
+  return "#e0675a"; // red
 }
 
 export default async function OG({ params }: { params: Promise<{ slug: string }> }) {
@@ -24,8 +23,8 @@ export default async function OG({ params }: { params: Promise<{ slug: string }>
           style={{
             width: "100%",
             height: "100%",
-            background: "#09090b",
-            color: "#fafafa",
+            background: "#14161b",
+            color: "#ededea",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -66,13 +65,13 @@ export default async function OG({ params }: { params: Promise<{ slug: string }>
             style={{
               width: 16,
               height: 16,
-              borderRadius: 999,
-              background: "#10b981",
+              borderRadius: 4,
+              background: "#c6f24e",
             }}
           />
           <span
             style={{
-              color: "#a1a1aa",
+              color: "#9a9ca4",
               fontSize: 24,
               letterSpacing: 4,
               textTransform: "uppercase",

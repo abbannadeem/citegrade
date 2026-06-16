@@ -1,37 +1,38 @@
 import type { Finding } from "@/lib/audit/types";
-import { Check, AlertTriangle, X } from "lucide-react";
 
-function icon(sev: Finding["severity"]) {
+function tag(sev: Finding["severity"]) {
   if (sev === "pass")
-    return <Check className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />;
+    return { label: "PASS", cls: "text-signal-deep", dot: "var(--signal-deep)" };
   if (sev === "warn")
-    return <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400" />;
-  return <X className="w-4 h-4 text-rose-600 dark:text-rose-400" />;
-}
-
-function leftBorder(sev: Finding["severity"]) {
-  if (sev === "pass") return "border-l-emerald-500/60";
-  if (sev === "warn") return "border-l-amber-500/60";
-  return "border-l-rose-500/60";
+    return { label: "WARN", cls: "text-warn", dot: "var(--warn)" };
+  return { label: "FAIL", cls: "text-danger", dot: "var(--danger)" };
 }
 
 export function FindingRow({ finding }: { finding: Finding }) {
+  const t = tag(finding.severity);
   return (
-    <li className={`pl-4 pr-5 py-4 border-l-2 ${leftBorder(finding.severity)}`}>
+    <li className="px-5 py-4">
       <details className="group">
         <summary className="list-none cursor-pointer flex items-start gap-3">
-          <span className="mt-1">{icon(finding.severity)}</span>
+          <span
+            aria-hidden
+            className="mt-1.5 w-1.5 h-1.5 rounded-[1px] shrink-0"
+            style={{ background: t.dot }}
+          />
           <div className="flex-1 min-w-0">
             <div className="flex items-start justify-between gap-3">
               <p className="text-fg font-medium leading-snug">
+                <span className={`font-mono text-[11px] tracking-wider mr-2 ${t.cls}`}>
+                  {t.label}
+                </span>
                 {finding.title}
               </p>
-              <span className="tabular text-xs text-subtle font-mono shrink-0 mt-1">
-                {finding.earned} / {finding.max}
+              <span className="font-mono text-xs tabular text-subtle shrink-0 mt-0.5">
+                {finding.earned}/{finding.max}
               </span>
             </div>
             {finding.evidence && (
-              <p className="mt-1 text-sm text-muted font-mono leading-relaxed group-open:hidden">
+              <p className="mt-1 text-sm text-muted font-mono leading-relaxed group-open:hidden truncate">
                 {finding.evidence.length > 100
                   ? finding.evidence.slice(0, 100) + "…"
                   : finding.evidence}
@@ -39,22 +40,18 @@ export function FindingRow({ finding }: { finding: Finding }) {
             )}
           </div>
         </summary>
-        <div className="mt-3 ml-7 space-y-2">
+        <div className="mt-3 ml-[18px] space-y-3">
           {finding.evidence && (
             <div>
-              <p className="text-[10px] uppercase tracking-widest text-subtle mb-1">
-                Evidence
-              </p>
-              <pre className="text-xs text-fg font-mono bg-surface2 border border-line rounded px-3 py-2 whitespace-pre-wrap break-words">
+              <p className="rule-label mb-1.5">Evidence</p>
+              <pre className="text-xs text-fg font-mono bg-surface2 border border-line rounded-md px-3 py-2 whitespace-pre-wrap break-words">
                 {finding.evidence}
               </pre>
             </div>
           )}
           {finding.fix && (
             <div>
-              <p className="text-[10px] uppercase tracking-widest text-subtle mb-1">
-                Suggested fix
-              </p>
+              <p className="rule-label mb-1.5">Suggested fix</p>
               <p className="text-sm text-muted leading-relaxed">{finding.fix}</p>
             </div>
           )}
